@@ -5,14 +5,12 @@
 #include "CubeNode.h"
 #include "GeometryBuilder.h"
 #include "Util.h"
+#include "ShaderManager.h"
 
 #include <iostream>
 
 CubeNode::CubeNode() {
-    const std::string vertShaderSrc = Util::LoadFile("shaders/vert.glsl");
-    const std::string fragShaderSrc = Util::LoadFile("shaders/frag.glsl");
-
-    m_shader = std::make_shared<Shader>(vertShaderSrc, fragShaderSrc);
+    m_shader = ShaderManager::GetInstance().GetShader("main");
 
     GeometryBuilder gb;
 

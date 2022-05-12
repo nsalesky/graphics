@@ -7,6 +7,9 @@
 #include <glad/glad.h>
 #include "CubeNode.h"
 #include <memory>
+#include "ShaderManager.h"
+#include "Shader.h"
+#include "Util.h"
 
 Application::Application(unsigned int width, unsigned int height)
 : m_width(width), m_height(height) {
@@ -62,8 +65,16 @@ void Application::Init() {
         exit(1);
     }
 
-    std::unique_ptr<SceneNode> cube(new CubeNode());
-    m_rootNode.AddChild(std::move(cube));
+    const std::string vertShaderSrc = Util::LoadFile("shaders/vert.glsl");
+    const std::string fragShaderSrc = Util::LoadFile("shaders/frag.glsl");
+
+    // Set up the main shader
+    ShaderManager::GetInstance().AddShader("main",
+                                           std::make_shared<Shader>(vertShaderSrc, fragShaderSrc));
+
+    m_rootNode.AddChild(
+            std::move(
+                    std::make_unique<CubeNode>()));
 }
 
 void Application::Loop() {
