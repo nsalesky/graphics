@@ -2,9 +2,11 @@
 // Created by nicks on 5/10/2022.
 //
 
-#include "../include/application.h"
+#include "Application.h"
 #include <iostream>
 #include <glad/glad.h>
+#include "CubeNode.h"
+#include <memory>
 
 Application::Application(unsigned int width, unsigned int height)
 : m_width(width), m_height(height) {
@@ -60,33 +62,53 @@ void Application::Init() {
         exit(1);
     }
 
+    std::unique_ptr<SceneNode> cube(new CubeNode());
+    m_rootNode.AddChild(std::move(cube));
 }
 
 void Application::Loop() {
     bool running = true;
     SDL_Event event;
 
+    Uint64 now = SDL_GetPerformanceCounter();
+    Uint64 last = 0;
+
     while (running) {
+        // Calculate deltaTime
+        last = now;
+        now = SDL_GetPerformanceCounter();
+        float deltaTime = ((now - last)*1000 / (float)SDL_GetPerformanceFrequency());
+
         //Input
         while(SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
                 running = false;
+            } else {
+                // Handle this event anywhere it is needed
+                m_rootNode.InputTree(event);
             }
         }
 
-        // Update
+        // Update the scene tree
+        m_rootNode.UpdateTree(deltaTime, Transform());
 
-        // Render
-        glEnable(GL_TEXTURE_2D);
-
-        glViewport(0, 0, m_width, m_height);
-
-        glClearColor(1, 0, 0, 1);
-        glClear(GL_COLOR_BUFFER_BIT);
+        Render();
 
         SDL_Delay(25);
 
         // Swap buffers
         SDL_GL_SwapWindow(m_window);
     }
+}
+
+void Application::Render() {
+    glEnable(GL_TEXTURE_2D);
+
+    glViewport(0, 0, m_width, m_height);
+
+    glClearColor(0, 0, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Render the scene tree
+    m_rootNode.RenderTree();
 }

@@ -5,6 +5,7 @@
 #ifndef GRAPHICS_APPLICATION_H
 #define GRAPHICS_APPLICATION_H
 
+#include "EmptyNode.h"
 #include <SDL2/SDL.h>
 
 /**
@@ -24,12 +25,19 @@ public:
      * Executes the main input-update-render loop, and doesn't return until the user requests to quit.
      */
     void Loop();
+
+    /**
+     * Renders the application.
+     */
+    void Render();
 private:
     unsigned int m_width; // the window width in pixels
     unsigned int m_height; // the window height in pixels
 
     SDL_Window* m_window; // the window buffer
     SDL_GLContext m_openglContext; // the OpenGL context for the window
+
+    EmptyNode m_rootNode;
 
     /**
      * Initializes SDL2 and the OpenGL context, and exits the process if any errors occur.
