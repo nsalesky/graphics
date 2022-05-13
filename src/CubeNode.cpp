@@ -6,11 +6,17 @@
 #include "GeometryBuilder.h"
 #include "Util.h"
 #include "ShaderManager.h"
+#include "CameraManager.h"
+#include "Camera.h"
+#include "FreeFlyCamera.h"
 
 #include <iostream>
 
 CubeNode::CubeNode() {
     m_shader = ShaderManager::GetInstance().GetShader("main");
+
+    // Add a free-fly camera input
+    AddChild(std::move(std::make_unique<FreeFlyCamera>()));
 
     GeometryBuilder gb;
 
@@ -25,8 +31,21 @@ CubeNode::CubeNode() {
     m_geometry = std::move(gb.BuildGeometry());
 }
 
-void CubeNode::Update(float deltaTime) {
+void CubeNode::Input(SDL_Event &event) {
+}
 
+void CubeNode::Update(float deltaTime) {
+    m_shader->Bind();
+
+    glm::mat4 modelMatrix = m_localTransform.GetInternalMatrix();
+    glm::mat4 viewMatrix = CameraManager::GetInstance().GetMainCamera()->GetViewMatrix();
+    glm::mat4 projectionMatrix = Util::CalculateProjectionMatrix();
+
+    m_shader->SetMatrix("modelMatrix", modelMatrix);
+    m_shader->SetMatrix("viewMatrix", viewMatrix);
+    m_shader->SetMatrix("projectionMatrix", projectionMatrix);
+
+    m_shader->Unbind();
 }
 
 void CubeNode::Render() {
