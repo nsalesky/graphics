@@ -61,6 +61,10 @@ void Camera::MouseLook(int mouseRelX, int mouseRelY) {
     m_viewDir = glm::rotate(m_viewDir, glm::radians(mouseDelta.y), rightVector);
 }
 
+glm::vec3 Camera::GetPosition() {
+    return m_pos;
+}
+
 void Camera::SetPosition(glm::vec3 pos) {
     m_pos = pos;
 }

@@ -10,12 +10,14 @@
 #include "Shader.h"
 #include <memory>
 
+/**
+ * This is an object for testing
+ */
 class CubeNode : public SceneNode {
 public:
     CubeNode();
-    ~CubeNode() {}
 
-    void Input(SDL_Event& event) override {}
+    void Input(SDL_Event& event) override;
     void Update(float deltaTime) override;
     void Render() override;
 private:

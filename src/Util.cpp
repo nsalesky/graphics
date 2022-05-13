@@ -7,6 +7,8 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include "Constants.h"
+#include <glm/gtc/matrix_transform.hpp>
 
 std::string Util::LoadFile(const std::string &filename) {
     std::ifstream file(filename);
@@ -25,4 +27,8 @@ std::string Util::LoadFile(const std::string &filename) {
 
     // Finally, return the buffer as a string
     return buffer.str();
+}
+
+glm::mat4 Util::CalculateProjectionMatrix() {
+    return glm::perspective(45.0f, (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1f, 512.0f);
 }

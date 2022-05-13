@@ -70,8 +70,13 @@ public:
     void MouseLook(int mouseRelX, int mouseRelY);
 
     /**
+     * Gets the camera's position in world space
+     */
+    glm::vec3 GetPosition();
+
+    /**
      * Sets the camera's position to the given value.
-     * @param pos the new camera position
+     * @param pos the new camera position in world space
      */
     void SetPosition(glm::vec3 pos);
 

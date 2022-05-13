@@ -61,6 +61,10 @@ void Shader::SetFloat(const std::string &name, float value) {
     glUniform1f(glGetUniformLocation(m_programID, name.c_str()), value);
 }
 
+void Shader::SetMatrix(const std::string &name, glm::mat4 value) {
+    glUniformMatrix4fv(glGetUniformLocation(m_programID, name.c_str()), 1, GL_FALSE, &value[0][0]);
+}
+
 unsigned int Shader::CreateShader(unsigned int shaderType, const std::string &shaderSource) {
     // Allocate the shader on the GPU
     unsigned int shader = glCreateShader(shaderType);

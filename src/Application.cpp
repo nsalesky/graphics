@@ -81,6 +81,9 @@ void Application::Loop() {
     bool running = true;
     SDL_Event event;
 
+    // Set up the mouse in relative mode
+    SDL_SetRelativeMouseMode(SDL_TRUE);
+
     Uint64 now = SDL_GetPerformanceCounter();
     Uint64 last = 0;
 
@@ -92,7 +95,8 @@ void Application::Loop() {
 
         //Input
         while(SDL_PollEvent(&event)) {
-            if (event.type == SDL_QUIT) {
+            // Two different ways to quit the program, either by clicking the quit button or by pressing "Q"
+            if (event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_q)) {
                 running = false;
             } else {
                 // Handle this event anywhere it is needed

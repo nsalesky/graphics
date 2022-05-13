@@ -7,6 +7,7 @@
 
 #include "glad/glad.h"
 #include <string>
+#include <glm/glm.hpp>
 
 class Shader {
 public:
@@ -50,6 +51,13 @@ public:
      * @param value the new value to set
      */
     void SetFloat(const std::string& name, float value);
+
+    /**
+     * Sets the value for a matrix uniform variable in this shader.
+     * @param name the uniform's name
+     * @param value the new value to set
+     */
+    void SetMatrix(const std::string& name, glm::mat4 value);
 private:
     unsigned int m_programID; // the OpenGL program ID
 
