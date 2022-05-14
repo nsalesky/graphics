@@ -10,6 +10,8 @@
 #include "ShaderManager.h"
 #include "Shader.h"
 #include "Util.h"
+#include "Model.h"
+#include "FreeFlyCamera.h"
 
 Application::Application(unsigned int width, unsigned int height)
 : m_width(width), m_height(height) {
@@ -67,14 +69,19 @@ void Application::Init() {
 
     const std::string vertShaderSrc = Util::LoadFile("shaders/vert.glsl");
     const std::string fragShaderSrc = Util::LoadFile("shaders/frag.glsl");
+    std::shared_ptr<Shader> mainShader = std::make_shared<Shader>(vertShaderSrc, fragShaderSrc);
 
     // Set up the main shader
-    ShaderManager::GetInstance().AddShader("main",
-                                           std::make_shared<Shader>(vertShaderSrc, fragShaderSrc));
+    ShaderManager::GetInstance().AddShader("main", mainShader);
 
-    m_rootNode.AddChild(
-            std::move(
-                    std::make_unique<CubeNode>()));
+//    m_rootNode.AddChild(
+//            std::move(
+//                    std::make_unique<CubeNode>()));
+
+    std::unique_ptr<SceneNode> model = std::make_unique<Model>("assets/backpack/backpack.obj", mainShader);
+    m_rootNode.AddChild(std::move(model));
+
+    m_rootNode.AddChild(std::move(std::make_unique<FreeFlyCamera>()));
 }
 
 void Application::Loop() {
@@ -117,12 +124,13 @@ void Application::Loop() {
 }
 
 void Application::Render() {
+    glEnable(GL_DEPTH_TEST);
     glEnable(GL_TEXTURE_2D);
 
     glViewport(0, 0, m_width, m_height);
 
     glClearColor(0, 0, 0, 1);
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Render the scene tree
     m_rootNode.RenderTree();

@@ -55,4 +55,7 @@ void FreeFlyCamera::Update(float deltaTime) {
     if (m_keyboardAxis.y != 0) {
         mainCamera->MoveForward(CAMERA_SPEED * deltaTime * m_keyboardAxis.y);
     }
+
+//    glm::vec3 pos = mainCamera->GetPosition();
+//    std::cout << "Camera is at: [" << pos.x << ", " << pos.y << ", " << pos.z << "]" << std::endl;
 }
