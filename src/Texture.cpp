@@ -15,7 +15,6 @@ Texture::Texture(const std::string filename, const TextureType type)
 }
 
 Texture::~Texture() {
-    std::cout << "BREAK TEXTURE" << std::endl;
     glDeleteTextures(1, &m_textureID);
 }
 
@@ -59,12 +58,18 @@ void Texture::LoadTexture() {
     }
 }
 
-void Texture::Bind(std::shared_ptr<Shader> &shader, const std::string& uniformName, unsigned int textureSlot) {
+void Texture::Bind(std::shared_ptr<Shader>& shader, const std::string& uniformName, unsigned int textureSlot) {
     // Make sure we bind to the right slot
     glActiveTexture(GL_TEXTURE0 + textureSlot);
     shader->SetInt(uniformName, textureSlot);
     glBindTexture(GL_TEXTURE_2D, m_textureID);
 
+    glActiveTexture(GL_TEXTURE0);
+}
+
+void Texture::Unbind(std::shared_ptr<Shader>& shader, unsigned int textureSlot) {
+    glActiveTexture(GL_TEXTURE0 + textureSlot);
+    glBindTexture(GL_TEXTURE_2D, 0);
     glActiveTexture(GL_TEXTURE0);
 }
 

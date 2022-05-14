@@ -38,7 +38,7 @@ public:
     Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<std::shared_ptr<Texture>> textures);
 
     /**
-     * Draws this mesh with OpenGL.
+     * Draws this mesh with OpenGL, assuming that the shader has already been bound.
      * @param shader the shader to bind to
      */
     void Draw(std::shared_ptr<Shader>& shader);

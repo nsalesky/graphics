@@ -34,12 +34,19 @@ public:
     ~Texture();
 
     /**
-     * Binds this texture to the given texture slot of the given shader, assuming that the shader has already been bound.
-     * @param shader the shader to bind to
+     * Binds this texture to the given texture slot.
+     * @param shader the shader to bind to, assumed to be bound already
      * @param uniformName the name of the uniform to bind to
      * @param textureSlot the texture slot to use
      */
     void Bind(std::shared_ptr<Shader>& shader, const std::string& uniformName, unsigned int textureSlot = 0);
+
+    /**
+     * Unbinds this texture from the given texture slot.
+     * @param shader the shader to unbind from, assumed to be bound already
+     * @param textureSlot the texture slot to unbind from
+     */
+    void Unbind(std::shared_ptr<Shader>& shader, unsigned int textureSlot = 0);
 
     /**
      * Gets the filename that this texture was loaded from. This is useful when determining if a given image filename

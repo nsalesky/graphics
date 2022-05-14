@@ -58,8 +58,6 @@ void Mesh::SetupMesh() {
 }
 
 void Mesh::Draw(std::shared_ptr<Shader>& shader) {
-    shader->Bind();
-
     unsigned int diffuseNum = 1;
     unsigned int specularNum = 1;
     unsigned int normalNum = 1;
@@ -104,7 +102,8 @@ void Mesh::Draw(std::shared_ptr<Shader>& shader) {
     glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, nullptr);
     glBindVertexArray(0);
 
-    glActiveTexture(GL_TEXTURE0);
-
-    shader->Unbind();
+    // Unbind the textures
+    for (unsigned int i = 0; i < m_textures.size(); i += 1) {
+        m_textures[i]->Unbind(shader, i);
+    }
 }

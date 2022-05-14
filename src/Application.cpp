@@ -74,9 +74,7 @@ void Application::Init() {
     // Set up the main shader
     ShaderManager::GetInstance().AddShader("main", mainShader);
 
-//    m_rootNode.AddChild(
-//            std::move(
-//                    std::make_unique<CubeNode>()));
+    m_rootNode.AddChild(std::move(std::make_unique<CubeNode>()));
 
     std::unique_ptr<SceneNode> model = std::make_unique<Model>("assets/backpack/backpack.obj", mainShader);
     m_rootNode.AddChild(std::move(model));

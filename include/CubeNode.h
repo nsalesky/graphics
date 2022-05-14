@@ -6,9 +6,9 @@
 #define GRAPHICS_CUBENODE_H
 
 #include "SceneNode.h"
-#include "Geometry.h"
 #include "Shader.h"
 #include <memory>
+#include "Mesh.h"
 
 /**
  * This is an object for testing
@@ -21,7 +21,7 @@ public:
     void Update(float deltaTime) override;
     void Render() override;
 private:
-    std::unique_ptr<Geometry> m_geometry;
+    std::unique_ptr<Mesh> m_mesh;
 };
 
 
