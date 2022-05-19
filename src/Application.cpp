@@ -12,6 +12,9 @@
 #include "Util.h"
 #include "Model.h"
 #include "FreeFlyCamera.h"
+#include "Lighting.h"
+#include "PointLight.h"
+#include "glm/glm.hpp"
 
 Application::Application(unsigned int width, unsigned int height)
 : m_width(width), m_height(height) {
@@ -76,8 +79,21 @@ void Application::Init() {
 
     m_rootNode.AddChild(std::move(std::make_unique<CubeNode>()));
 
-    std::unique_ptr<SceneNode> model = std::make_unique<Model>("assets/backpack/backpack.obj", mainShader);
-    m_rootNode.AddChild(std::move(model));
+    m_rootNode.AddChild(std::move(std::make_unique<Model>("assets/backpack/backpack.obj", mainShader)));
+
+    m_rootNode.AddChild(std::move(std::make_unique<PointLight>(
+            glm::vec3(2.0, 1.0, 1.0),
+            glm::vec3(255.0, 0.0, 0.0),
+            0.3,
+            0.5
+            )));
+
+    m_rootNode.AddChild(std::move(std::make_unique<PointLight>(
+            glm::vec3(-1.3, 0.0, -0.5),
+            glm::vec3(0.0, 0.0, 255.0),
+            0.3,
+            0.6
+    )));
 
     m_rootNode.AddChild(std::move(std::make_unique<FreeFlyCamera>()));
 }
@@ -122,6 +138,18 @@ void Application::Loop() {
 }
 
 void Application::Render() {
+    // Preliminary lighting pass, find all lights in the scene
+    std::vector<std::reference_wrapper<SceneNode>> pointLightNodes = m_rootNode.FindAllTaggedNodes(NodeTag::POINT_LIGHT);
+    std::vector<PointLightInfo> pointLightInfos;
+    for (auto pointLightNode : pointLightNodes) {
+        SceneNode& node = pointLightNode;
+        auto& pl = dynamic_cast<PointLight&>(node);
+        pointLightInfos.push_back(pl.GetInfo());
+    }
+
+    // Finally, construct the actual lighting information
+    Lighting lighting(pointLightInfos);
+
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_TEXTURE_2D);
 
@@ -131,5 +159,5 @@ void Application::Render() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Render the scene tree
-    m_rootNode.RenderTree();
+    m_rootNode.RenderTree(lighting);
 }

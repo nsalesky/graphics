@@ -49,20 +49,24 @@ void Shader::Unbind() {
     glUseProgram(0);
 }
 
-void Shader::SetBool(const std::string &name, bool value) {
+void Shader::SetBool(const std::string &name, bool value) const {
     glUniform1i(glGetUniformLocation(m_programID, name.c_str()), (int)value);
 }
 
-void Shader::SetInt(const std::string &name, int value) {
+void Shader::SetInt(const std::string &name, int value) const {
     glUniform1i(glGetUniformLocation(m_programID, name.c_str()), value);
 }
 
-void Shader::SetFloat(const std::string &name, float value) {
+void Shader::SetFloat(const std::string &name, float value) const {
     glUniform1f(glGetUniformLocation(m_programID, name.c_str()), value);
 }
 
-void Shader::SetMatrix(const std::string &name, glm::mat4 value) {
+void Shader::SetMatrix4(const std::string &name, glm::mat4 value) const {
     glUniformMatrix4fv(glGetUniformLocation(m_programID, name.c_str()), 1, GL_FALSE, &value[0][0]);
+}
+
+void Shader::SetVector3(const std::string &name, glm::vec3 value) const {
+    glUniform3f(glGetUniformLocation(m_programID, name.c_str()), value.x, value.y, value.z);
 }
 
 unsigned int Shader::CreateShader(unsigned int shaderType, const std::string &shaderSource) {

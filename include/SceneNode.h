@@ -10,6 +10,17 @@
 #include <memory>
 #include "Transform.h"
 #include "Shader.h"
+#include "Lighting.h"
+
+/**
+ * A tag that can be used to mark a node as special in some way for the first-phase scene tree traversal. I plan to
+ * use this for dynamic lights, so that lights can be a part of the scene tree, but still be located in a first-phase
+ * traversal.
+ */
+enum NodeTag {
+    NO_TAG, // a normal untagged node
+    POINT_LIGHT, // a point light
+};
 
 /**
  * An individual node in the scene which can contain multiple child nodes, all transformed relative to this parent.
@@ -30,15 +41,29 @@ public:
     void UpdateTree(float deltaTime, Transform parentWorldTransform);
 
     /**
-     * Renders the entire scene tree.
+     * Renders the entire scene tree with the given lighting information.
+     * @param lighting the set of lighting information to bind
      */
-    void RenderTree();
+    void RenderTree(Lighting& lighting);
 
     /**
      * Adds the given node as a child to this node and updates its transform relative to this parent node.
      * @param child the child to add
      */
     void AddChild(std::unique_ptr<SceneNode> child);
+
+    /**
+     * Finds all nodes in this node's hierarchy with the given tag.
+     * @param queryTag the tag to query for
+     * @return all nodes in this hierarchy with that tag
+     */
+    std::vector<std::reference_wrapper<SceneNode>> FindAllTaggedNodes(NodeTag queryTag);
+
+    /**
+     * Gets this node's tag, allowing nodes to be identified in a scene tree traversal.
+     * @return this node's tag
+     */
+    NodeTag GetTag();
 protected:
     Transform m_localTransform;
     Transform m_worldTransform;
@@ -61,6 +86,8 @@ protected:
      * Renders this object.
      */
     virtual void Render() = 0;
+
+    NodeTag m_tag = NodeTag::NO_TAG; // default to no tag, makes sense
 private:
    std::vector<std::unique_ptr<SceneNode>> m_children;
 

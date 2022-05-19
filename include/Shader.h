@@ -36,28 +36,35 @@ public:
      * @param name the uniform's name
      * @param value the new value to set
      */
-    void SetBool(const std::string& name, bool value);
+    void SetBool(const std::string& name, bool value) const;
 
     /**
      * Sets the value for an integer uniform variable in this shader.
      * @param name the uniform's name
      * @param value the new value to set
      */
-    void SetInt(const std::string& name, int value);
+    void SetInt(const std::string& name, int value) const;
 
     /**
      * Sets the value for a floating-point uniform variable in this shader.
      * @param name the uniform's name
      * @param value the new value to set
      */
-    void SetFloat(const std::string& name, float value);
+    void SetFloat(const std::string& name, float value) const;
 
     /**
-     * Sets the value for a matrix uniform variable in this shader.
+     * Sets the value for a 4x4 matrix uniform variable in this shader.
      * @param name the uniform's name
      * @param value the new value to set
      */
-    void SetMatrix(const std::string& name, glm::mat4 value);
+    void SetMatrix4(const std::string& name, glm::mat4 value) const;
+
+    /**
+     * Sets the value for a 3D vector uniform variable in this shader.
+     * @param name the uniform's name
+     * @param value the new value to set
+     */
+    void SetVector3(const std::string& name, glm::vec3 value) const;
 private:
     unsigned int m_programID; // the OpenGL program ID
 

@@ -43,9 +43,9 @@ void CubeNode::Render() {
     glm::mat4 viewMatrix = CameraManager::GetInstance().GetMainCamera()->GetViewMatrix();
     glm::mat4 projectionMatrix = Util::CalculateProjectionMatrix();
 
-    m_shader->SetMatrix("modelMatrix", modelMatrix);
-    m_shader->SetMatrix("viewMatrix", viewMatrix);
-    m_shader->SetMatrix("projectionMatrix", projectionMatrix);
+    m_shader->SetMatrix4("modelMatrix", modelMatrix);
+    m_shader->SetMatrix4("viewMatrix", viewMatrix);
+    m_shader->SetMatrix4("projectionMatrix", projectionMatrix);
 
     m_mesh->Draw(m_shader);
 }
