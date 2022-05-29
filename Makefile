@@ -1,16 +1,55 @@
-CC = gcc
-CXX = g++
-CXXFLAGS = -g -Wall -std=c++17 -lmingw32 -lSDL2main -lSDL2 -lassimp
+# copied from https://www.partow.net/programming/makefile/index.html
 
-INCLUDES = -Iinclude
+CXX      := g++
+CXXFLAGS := -std=c++17 -Wall
+LDFLAGS  := -lmingw32 -lSDL2main -lSDL2 -lassimp
+BUILD    := ./build
+OBJ_DIR  := $(BUILD)/objects
+APP_DIR  := $(BUILD)/apps
+TARGET   := program
+INCLUDE  := -Iinclude/
+SRC      := \
+   $(wildcard src/*.cpp) \
 
-#TODO: I shouldn't have to manually add each source file here, figure out how to automate it for src/*.cpp
-OBJS = src/main.cpp src/Application.cpp src/SceneNode.cpp src/Transform.cpp src/Shader.cpp src/Model.cpp src/Texture.cpp src/Lighting.cpp src/PointLight.cpp src/Mesh.cpp src/GeometryBuilder.cpp src/Geometry.cpp src/Util.cpp src/ShaderManager.cpp src/Camera.cpp src/CameraManager.cpp src/FreeFlyCamera.cpp src/CubeNode.cpp src/glad.c
+OBJECTS  := $(SRC:%.cpp=$(OBJ_DIR)/%.o)
+DEPENDENCIES := \
+   $(OBJECTS:.o=.d)
 
-default: all
+copy_assets:
+	cp -r ./shaders $(APP_DIR)
+	cp -r ./assets $(APP_DIR)
 
-all: $(OBJS)
-	$(CXX) $(OBJS) $(CXXFLAGS) $(INCLUDES) -o graphics
+all: copy_assets build $(APP_DIR)/$(TARGET)
+
+$(OBJ_DIR)/%.o: %.cpp
+	@mkdir -p $(@D)
+	$(CXX) $(CXXFLAGS) $(INCLUDE) -c $< -MMD -o $@
+
+$(APP_DIR)/$(TARGET): $(OBJECTS)
+	@mkdir -p $(@D)
+	$(CXX) $(CXXFLAGS) -o $(APP_DIR)/$(TARGET) $^ $(LDFLAGS)
+
+-include $(DEPENDENCIES)
+
+.PHONY: all build clean debug release info
+
+build:
+	@mkdir -p $(APP_DIR)
+	@mkdir -p $(OBJ_DIR)
+
+debug: CXXFLAGS += -DDEBUG -g
+debug: all
+
+release: CXXFLAGS += -O2
+release: all
 
 clean:
-	$(RM) graphics.exe *.o
+	-@rm -rvf $(OBJ_DIR)/*
+	-@rm -rvf $(APP_DIR)/*
+
+info:
+	@echo "[*] Application dir: ${APP_DIR}     "
+	@echo "[*] Object dir:      ${OBJ_DIR}     "
+	@echo "[*] Sources:         ${SRC}         "
+	@echo "[*] Objects:         ${OBJECTS}     "
+	@echo "[*] Dependencies:    ${DEPENDENCIES}"
