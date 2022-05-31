@@ -83,17 +83,17 @@ void Application::Init() {
 
     m_rootNode.AddChild(std::move(std::make_unique<PointLight>(
             glm::vec3(2.0, 1.0, 1.0),
-            glm::vec3(255.0, 0.0, 0.0),
+            glm::vec3(255.0, 255.0, 255.0),
             0.3,
-            0.5
+            0.7
             )));
 
-    m_rootNode.AddChild(std::move(std::make_unique<PointLight>(
-            glm::vec3(-1.3, 0.0, -0.5),
-            glm::vec3(0.0, 0.0, 255.0),
-            0.3,
-            0.6
-    )));
+//    m_rootNode.AddChild(std::move(std::make_unique<PointLight>(
+//            glm::vec3(-1.3, 0.0, -0.5),
+//            glm::vec3(0.0, 0.0, 255.0),
+//            0.3,
+//            0.6
+//    )));
 
     m_rootNode.AddChild(std::move(std::make_unique<FreeFlyCamera>()));
 }

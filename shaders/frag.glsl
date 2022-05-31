@@ -2,9 +2,7 @@
 
 struct Material {
     sampler2D texture_diffuse;
-
     sampler2D texture_specular;
-
     sampler2D texture_normal;
 };
 
@@ -48,7 +46,8 @@ vec3 CalcPointLight(PointLight pointLight, vec3 normal, vec3 fragPos, vec3 viewD
     // specular component
     vec3 reflectDir = reflect(-lightDir, normal);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
-    vec3 specular = pointLight.specularStrength * spec * pointLight.lightColor;
+//    vec3 specular = pointLight.specularStrength * spec * pointLight.lightColor;
+    vec3 specular = pointLight.specularStrength * spec * pointLight.lightColor * vec3(texture(material.texture_specular, TexCoords));
 
     // attenuation
     float distance = length(pointLight.lightPos - fragPos);
