@@ -23,11 +23,10 @@ CubeNode::CubeNode() {
     std::vector<unsigned int> indices = {0, 1, 3,
                                          1, 2, 3};
 
-    std::vector<std::shared_ptr<Texture>> textures = {
-            std::make_shared<Texture>("assets/cat.png")
-    };
+    std::shared_ptr<Texture> cat = std::make_shared<Texture>("assets/cat.png");
+    std::shared_ptr<Material> material = std::make_shared<Material>(cat, cat);
 
-    m_mesh = std::make_unique<Mesh>(vertices, indices, textures);
+    m_mesh = std::make_unique<Mesh>(vertices, indices, material);
 
     m_localTransform.Translate(0, 0, 5.0f);
 }
@@ -47,5 +46,5 @@ void CubeNode::Render() {
     m_shader->SetMatrix4("viewMatrix", viewMatrix);
     m_shader->SetMatrix4("projectionMatrix", projectionMatrix);
 
-    m_mesh->Draw(m_shader);
+    m_mesh->Draw(*m_shader);
 }

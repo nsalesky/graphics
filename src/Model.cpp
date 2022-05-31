@@ -25,7 +25,7 @@ void Model::Render() {
     m_shader->SetMatrix4("projectionMatrix", projectionMatrix);
 
     for (Mesh& mesh : m_meshes) {
-        mesh.Draw(m_shader);
+        mesh.Draw(*m_shader);
     }
 }
 
@@ -115,37 +115,45 @@ Mesh Model::ProcessMesh(aiMesh *mesh, const aiScene *scene) {
     if (mesh->mMaterialIndex >= 0) {
         aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
-        // 1. diffuse maps
-        std::vector<std::shared_ptr<Texture>> diffuseMaps = LoadMaterialTextures(material,
-                                                                aiTextureType_DIFFUSE,
-                                                                TextureType::DIFFUSE);
-        textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
+        std::shared_ptr<Texture> diffuseTexture = LoadMaterialTexture(material,
+                                                                      aiTextureType_DIFFUSE,
+                                                                      TextureType::DIFFUSE);
+        std::shared_ptr<Texture> specularTexture = LoadMaterialTexture(material,
+                                                                      aiTextureType_SPECULAR,
+                                                                      TextureType::SPECULAR);
 
-        // 2. specular maps
-        std::vector<std::shared_ptr<Texture>> specularMaps = LoadMaterialTextures(material,
-                                                                 aiTextureType_SPECULAR,
-                                                                 TextureType::SPECULAR);
-        textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
+        return {vertices, indices, std::make_shared<Material>(diffuseTexture, specularTexture)};
 
-        // 3. normal maps
-        std::vector<std::shared_ptr<Texture>> normalMaps = LoadMaterialTextures(material,
-                                                               aiTextureType_HEIGHT, // TODO: make sure this is right
-                                                               TextureType::NORMAL);
-        textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
-
-        // 4. height maps
-        std::vector<std::shared_ptr<Texture>> heightMaps = LoadMaterialTextures(material,
-                                                               aiTextureType_AMBIENT,
-                                                               TextureType::HEIGHT);
-        textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
+//        // 1. diffuse maps
+//        std::vector<std::shared_ptr<Texture>> diffuseMaps = LoadMaterialTextures(material,
+//                                                                aiTextureType_DIFFUSE,
+//                                                                TextureType::DIFFUSE);
+//        textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
+//
+//        // 2. specular maps
+//        std::vector<std::shared_ptr<Texture>> specularMaps = LoadMaterialTextures(material,
+//                                                                 aiTextureType_SPECULAR,
+//                                                                 TextureType::SPECULAR);
+//        textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
+//
+//        // 3. normal maps
+//        std::vector<std::shared_ptr<Texture>> normalMaps = LoadMaterialTextures(material,
+//                                                               aiTextureType_HEIGHT, // TODO: make sure this is right
+//                                                               TextureType::NORMAL);
+//        textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
+//
+//        // 4. height maps
+//        std::vector<std::shared_ptr<Texture>> heightMaps = LoadMaterialTextures(material,
+//                                                               aiTextureType_AMBIENT,
+//                                                               TextureType::HEIGHT);
+//        textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
     }
 
-    return {vertices, indices, textures};
+    std::cerr << "The loaded model had no material!" << std::endl;
+    throw std::runtime_error("The loaded model had no material");
 }
 
-std::vector<std::shared_ptr<Texture>> Model::LoadMaterialTextures(aiMaterial *mat, aiTextureType type, TextureType ourType) {
-    std::vector<std::shared_ptr<Texture>> textures;
-
+std::shared_ptr<Texture> Model::LoadMaterialTexture(aiMaterial *mat, aiTextureType type, TextureType ourType) {
     // Load all the textures referenced by this material of the given type
     for (unsigned int i = 0; i < mat->GetTextureCount(type); i += 1) {
         aiString str;
@@ -155,24 +163,20 @@ std::vector<std::shared_ptr<Texture>> Model::LoadMaterialTextures(aiMaterial *ma
         std::string fullFilename = m_directory + "/" + str.C_Str();
 
         // Check if we've already loaded a texture for this image filename. If so, just reuse it
-        bool skip = false;
         for (unsigned int j = 0; j < m_texturesLoaded.size(); j += 1) {
             if (std::strcmp(m_texturesLoaded[j]->GetFilename().data(), fullFilename.data()) == 0) {
-                textures.push_back(m_texturesLoaded[j]);
-                skip = true;
-                break;
+                return m_texturesLoaded[j];
             }
         }
 
-        if (!skip) {
-            // We haven't loaded this image before, so we'll make a new texture for it and remember it in case we see it again
+        // We haven't loaded this image before, so we'll make a new texture for it and remember it in case we see it again
 
-            std::shared_ptr<Texture> texture = std::make_shared<Texture>(fullFilename, ourType);
+        std::shared_ptr<Texture> texture = std::make_shared<Texture>(fullFilename, ourType);
 
-            textures.push_back(texture);
-            m_texturesLoaded.push_back(texture);
-        }
+        m_texturesLoaded.push_back(texture);
+        return texture;
     }
 
-    return textures;
+    std::cerr << "No texture of the given type was included in the Model!" << std::endl;
+    throw std::runtime_error("no texture of the given type was included in the model");
 }

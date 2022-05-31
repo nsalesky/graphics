@@ -10,8 +10,8 @@
 #include <vector>
 #include <memory>
 #include "Shader.h"
-#include "Texture.h"
 #include "SceneNode.h"
+#include "Material.h"
 
 /**
  * A vertex used for creating a mesh, containing each of the necessary vectors.
@@ -30,22 +30,23 @@ struct Vertex {
 class Mesh {
 public:
     /**
-     * Constructs a new mesh from the given vertices, indices, and textures.
+     * Constructs a new mesh from the given vertices and indices.
      * @param vertices the vertices to use for geometry information
      * @param indices the indices to determine how to compose triangles
-     * @param textures the list of textures to use for per-pixel detail
+     * @param material this mesh's material
      */
-    Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<std::shared_ptr<Texture>> textures);
+    Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::shared_ptr<Material> material);
 
     /**
      * Draws this mesh with OpenGL, assuming that the shader has already been bound.
      * @param shader the shader to bind to
      */
-    void Draw(std::shared_ptr<Shader>& shader);
+    void Draw(Shader& shader);
 private:
     std::vector<Vertex> m_vertices;
     std::vector<unsigned int> m_indices;
-    std::vector<std::shared_ptr<Texture>> m_textures;
+
+    std::shared_ptr<Material> m_material;
 
     unsigned int m_VAO, m_VBO, m_EBO;
 

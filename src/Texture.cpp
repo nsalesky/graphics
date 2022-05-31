@@ -58,16 +58,16 @@ void Texture::LoadTexture() {
     }
 }
 
-void Texture::Bind(std::shared_ptr<Shader>& shader, const std::string& uniformName, unsigned int textureSlot) {
+void Texture::Bind(Shader& shader, const std::string& uniformName, unsigned int textureSlot) {
     // Make sure we bind to the right slot
     glActiveTexture(GL_TEXTURE0 + textureSlot);
-    shader->SetInt(uniformName, textureSlot);
+    shader.SetInt(uniformName, textureSlot);
     glBindTexture(GL_TEXTURE_2D, m_textureID);
 
     glActiveTexture(GL_TEXTURE0);
 }
 
-void Texture::Unbind(std::shared_ptr<Shader>& shader, unsigned int textureSlot) {
+void Texture::Unbind(Shader& shader, unsigned int textureSlot) {
     glActiveTexture(GL_TEXTURE0 + textureSlot);
     glBindTexture(GL_TEXTURE_2D, 0);
     glActiveTexture(GL_TEXTURE0);

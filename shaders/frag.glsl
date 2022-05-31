@@ -1,23 +1,11 @@
 #version 460 core
 
 struct Material {
-    sampler2D texture_diffuse1;
-    sampler2D texture_diffuse2;
-    sampler2D texture_diffuse3;
-    sampler2D texture_diffuse4;
-    sampler2D texture_diffuse5;
+    sampler2D texture_diffuse;
 
-    sampler2D texture_specular1;
-    sampler2D texture_specular2;
-    sampler2D texture_specular3;
-    sampler2D texture_specular4;
-    sampler2D texture_specular5;
+    sampler2D texture_specular;
 
-    sampler2D texture_normal1;
-    sampler2D texture_normal2;
-    sampler2D texture_normal3;
-    sampler2D texture_normal4;
-    sampler2D texture_normal5;
+    sampler2D texture_normal;
 };
 
 struct PointLight {
@@ -78,7 +66,7 @@ vec3 CalcPointLight(PointLight pointLight, vec3 normal, vec3 fragPos, vec3 viewD
 void main() {
     vec3 norm = normalize(Normal);
 
-    vec3 diffuseColor = texture(material.texture_diffuse1, TexCoords).rgb;
+    vec3 diffuseColor = texture(material.texture_diffuse, TexCoords).rgb;
 
     vec3 viewDir = normalize(viewPos - FragPos);
 

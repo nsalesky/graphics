@@ -4,14 +4,8 @@
 
 #include "Mesh.h"
 
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<std::shared_ptr<Texture>> textures)
-: m_vertices(vertices), m_indices(indices) {
-
-    // Move over the textures
-    m_textures.reserve(textures.size());
-    for (unsigned int i = 0; i < textures.size(); i += 1) {
-        m_textures.push_back(std::move(textures[i]));
-    }
+Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::shared_ptr<Material> material)
+: m_vertices(vertices), m_indices(indices), m_material(material) {
 
     SetupMesh();
 }
@@ -57,53 +51,51 @@ void Mesh::SetupMesh() {
     glBindVertexArray(0);
 }
 
-void Mesh::Draw(std::shared_ptr<Shader>& shader) {
-    unsigned int diffuseNum = 1;
-    unsigned int specularNum = 1;
-    unsigned int normalNum = 1;
-    unsigned int heightNum = 1;
-
-    for (unsigned int i = 0; i < m_textures.size(); i += 1) {
-        std::string number;
-        std::string name;
-
-        switch (m_textures[i]->GetType()) {
-            case TextureType::DIFFUSE:
-                number = std::to_string(diffuseNum++);
-                name = "texture_diffuse";
-                break;
-            case TextureType::SPECULAR:
-                number = std::to_string(specularNum++);
-                name = "texture_specular";
-                break;
-            case TextureType::NORMAL:
-                number = std::to_string(normalNum++);
-                name = "texture_normal";
-                break;
-            case TextureType::HEIGHT:
-                number = std::to_string(heightNum++);
-                name = "texture_height";
-                break;
-        }
-
-        // So the uniform will be named something like "material.texture_diffuse1"
-        const std::string uniformName = "material." + name + number;
-
-        // Bind the texture to its slot with that uniform name
-        m_textures[i]->Bind(shader, uniformName, i);
-    }
+void Mesh::Draw(Shader& shader) {
+//    unsigned int diffuseNum = 1;
+//    unsigned int specularNum = 1;
+//    unsigned int normalNum = 1;
+//    unsigned int heightNum = 1;
+//
+//    for (unsigned int i = 0; i < m_textures.size(); i += 1) {
+//        std::string number;
+//        std::string name;
+//
+//        switch (m_textures[i]->GetType()) {
+//            case TextureType::DIFFUSE:
+//                number = std::to_string(diffuseNum++);
+//                name = "texture_diffuse";
+//                break;
+//            case TextureType::SPECULAR:
+//                number = std::to_string(specularNum++);
+//                name = "texture_specular";
+//                break;
+//            case TextureType::NORMAL:
+//                number = std::to_string(normalNum++);
+//                name = "texture_normal";
+//                break;
+//            case TextureType::HEIGHT:
+//                number = std::to_string(heightNum++);
+//                name = "texture_height";
+//                break;
+//        }
+//
+//        // So the uniform will be named something like "material.texture_diffuse1"
+//        const std::string uniformName = "material." + name + number;
+//
+//        // Bind the texture to its slot with that uniform name
+//        m_textures[i]->Bind(shader, uniformName, i);
+//    }
+    m_material->Bind(shader);
 
     // Draw the mesh
     glBindVertexArray(m_VAO);
 
-    glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
+//    glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
+//    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
 
     glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, nullptr);
     glBindVertexArray(0);
 
-    // Unbind the textures
-    for (unsigned int i = 0; i < m_textures.size(); i += 1) {
-        m_textures[i]->Unbind(shader, i);
-    }
+    m_material->Unbind(shader);
 }

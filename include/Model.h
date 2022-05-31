@@ -7,6 +7,7 @@
 
 #include "SceneNode.h"
 #include "Mesh.h"
+#include "Texture.h"
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -55,13 +56,13 @@ private:
     Mesh ProcessMesh(aiMesh* mesh, const aiScene* scene);
 
     /**
-     * Loads the textures from the image files referenced by the given material with the given type and type name.
+     * Loads the first texture from the image files referenced by the given material with the given type and type name.
      * @param mat the material to load
      * @param type the type of texture to load, in the context of Assimp
      * @param ourType the type to use internally for the new texture objects
-     * @return
+     * @return the corresponding texture
      */
-    std::vector<std::shared_ptr<Texture>> LoadMaterialTextures(aiMaterial* mat, aiTextureType type, TextureType ourType);
+    std::shared_ptr<Texture> LoadMaterialTexture(aiMaterial* mat, aiTextureType type, TextureType ourType);
 };
 
 #endif //GRAPHICS_MODEL_H
