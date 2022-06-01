@@ -25,11 +25,20 @@ enum TextureType {
 class Texture {
 public:
     /**
-     * Constructs a new texture for the given image utilizing the given name as an OpenGL uniform.
+     * Constructs a new texture for the given image.
      * @param filename the filename of the image to load
-     * @param type which type of texture is this
+     * @param type which type of texture this is
      */
     Texture(const std::string filename, const TextureType type = TextureType::DIFFUSE);
+
+
+    /**
+     * Constructs a new solid 1x1 texture filled with the given color.
+     * @param color the solid color to fill the texture with
+     * @param type which type of texture this is
+     */
+    Texture(glm::vec3 color, const TextureType type = TextureType::DIFFUSE);
+
     ~Texture();
 
     /**

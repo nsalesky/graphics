@@ -4,6 +4,7 @@
 
 #include "Texture.h"
 #include <iostream>
+#include <vector>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -12,6 +13,24 @@ Texture::Texture(const std::string filename, const TextureType type)
 : m_filename(filename), m_type(type) {
 
     LoadTexture();
+}
+
+Texture::Texture(glm::vec3 color, const TextureType type) : m_type(type) {
+    GLubyte data[] = {(GLubyte)color.x, (GLubyte)color.y, (GLubyte)color.z, 255};
+
+    // Bind the texture and load in the image data
+    glGenTextures(1, &m_textureID);
+    glBindTexture(GL_TEXTURE_2D, m_textureID);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    // Set the basic texture parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 Texture::~Texture() {
@@ -56,6 +75,8 @@ void Texture::LoadTexture() {
         std::cerr << "Texture failed to load from: " << m_filename << std::endl;
         stbi_image_free(data);
     }
+
+    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void Texture::Bind(Shader& shader, const std::string& uniformName, unsigned int textureSlot) {

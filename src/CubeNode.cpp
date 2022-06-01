@@ -8,8 +8,6 @@
 #include "CameraManager.h"
 #include "Camera.h"
 
-#include <iostream>
-
 CubeNode::CubeNode() {
     m_shader = ShaderManager::GetInstance().GetShader("main");
 
@@ -23,12 +21,13 @@ CubeNode::CubeNode() {
     std::vector<unsigned int> indices = {0, 1, 3,
                                          1, 2, 3};
 
-    std::shared_ptr<Texture> cat = std::make_shared<Texture>("assets/cat.png");
+//    std::shared_ptr<Texture> cat = std::make_shared<Texture>("assets/cat.png");
+    std::shared_ptr<Texture> cat = std::make_shared<Texture>(glm::vec3(255.0f, 255.0f, 255.0f));
     std::shared_ptr<Material> material = std::make_shared<Material>(cat, cat);
 
     m_mesh = std::make_unique<Mesh>(vertices, indices, material);
 
-    m_localTransform.Translate(0, 0, 5.0f);
+    m_localTransform.Translate(2.0, 2.0, 1.0f);
 }
 
 void CubeNode::Input(SDL_Event &event) {
