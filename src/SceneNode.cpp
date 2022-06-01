@@ -4,11 +4,12 @@
 
 #include "SceneNode.h"
 #include "CameraManager.h"
+#include "Util.h"
 
 void SceneNode::InputTree(SDL_Event &e) {
     Input(e);
 
-    for (std::unique_ptr<SceneNode>& child : m_children) {
+    for (std::unique_ptr<SceneNode> &child: m_children) {
         child->InputTree(e);
     }
 }
@@ -19,18 +20,26 @@ void SceneNode::UpdateTree(float deltaTime, Transform parentWorldTransform) {
     // Update our world transform
     m_worldTransform = parentWorldTransform * m_localTransform;
 
-    for (std::unique_ptr<SceneNode>& child : m_children) {
+    for (std::unique_ptr<SceneNode> &child: m_children) {
         child->UpdateTree(deltaTime, m_worldTransform);
     }
 }
 
-void SceneNode::RenderTree(Lighting& lighting) {
+void SceneNode::RenderTree(Lighting &lighting) {
     // Bind the shader automatically if it exists
     if (m_shader) {
-       m_shader->Bind();
-       lighting.BindUniforms(*m_shader);
-       m_shader->SetVector3("viewPos",
-                            CameraManager::GetInstance().GetMainCamera()->GetPosition());
+        m_shader->Bind();
+        lighting.BindUniforms(*m_shader);
+        m_shader->SetVector3("viewPos",
+                             CameraManager::GetInstance().GetMainCamera()->GetPosition());
+
+        glm::mat4 modelMatrix = m_localTransform.GetInternalMatrix();
+        glm::mat4 viewMatrix = CameraManager::GetInstance().GetMainCamera()->GetViewMatrix();
+        glm::mat4 projectionMatrix = Util::CalculateProjectionMatrix();
+
+        m_shader->SetMatrix4("modelMatrix", modelMatrix);
+        m_shader->SetMatrix4("viewMatrix", viewMatrix);
+        m_shader->SetMatrix4("projectionMatrix", projectionMatrix);
     }
 
     Render();
@@ -40,7 +49,7 @@ void SceneNode::RenderTree(Lighting& lighting) {
         m_shader->Unbind();
     }
 
-    for (std::unique_ptr<SceneNode>& child : m_children) {
+    for (std::unique_ptr<SceneNode> &child: m_children) {
         child->RenderTree(lighting);
     }
 }
@@ -50,20 +59,20 @@ void SceneNode::AddChild(std::unique_ptr<SceneNode> child) {
 }
 
 std::vector<std::reference_wrapper<SceneNode>> SceneNode::FindAllTaggedNodes(NodeTag queryTag) {
-   std::vector<std::reference_wrapper<SceneNode>> nodes;
+    std::vector<std::reference_wrapper<SceneNode>> nodes;
 
-   if (m_tag == queryTag) {
-       nodes.emplace_back(*this);
-   }
+    if (m_tag == queryTag) {
+        nodes.emplace_back(*this);
+    }
 
-   for (auto& child : m_children) {
-       std::vector<std::reference_wrapper<SceneNode>> childTaggedNodes = child->FindAllTaggedNodes(queryTag);
-       for (auto& childTaggedNode : childTaggedNodes) {
-           nodes.emplace_back(childTaggedNode);
-       }
-   }
+    for (auto &child: m_children) {
+        std::vector<std::reference_wrapper<SceneNode>> childTaggedNodes = child->FindAllTaggedNodes(queryTag);
+        for (auto &childTaggedNode: childTaggedNodes) {
+            nodes.emplace_back(childTaggedNode);
+        }
+    }
 
-   return nodes;
+    return nodes;
 }
 
 NodeTag SceneNode::GetTag() {

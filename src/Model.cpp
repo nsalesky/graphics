@@ -16,14 +16,6 @@ Model::Model(const std::string &filename, std::shared_ptr<Shader> shader) {
 }
 
 void Model::Render() {
-    glm::mat4 modelMatrix = m_localTransform.GetInternalMatrix();
-    glm::mat4 viewMatrix = CameraManager::GetInstance().GetMainCamera()->GetViewMatrix();
-    glm::mat4 projectionMatrix = Util::CalculateProjectionMatrix();
-
-    m_shader->SetMatrix4("modelMatrix", modelMatrix);
-    m_shader->SetMatrix4("viewMatrix", viewMatrix);
-    m_shader->SetMatrix4("projectionMatrix", projectionMatrix);
-
     for (Mesh& mesh : m_meshes) {
         mesh.Draw(*m_shader);
     }

@@ -15,6 +15,7 @@
 #include "Lighting.h"
 #include "PointLight.h"
 #include "glm/glm.hpp"
+#include "LightingStressScene.h"
 
 Application::Application(unsigned int width, unsigned int height)
 : m_width(width), m_height(height) {
@@ -77,25 +78,11 @@ void Application::Init() {
     // Set up the main shader
     ShaderManager::GetInstance().AddShader("main", mainShader);
 
-    m_rootNode.AddChild(std::move(std::make_unique<CubeNode>()));
+//    m_rootNode.AddChild(std::move(std::make_unique<Model>("assets/backpack/backpack.obj", mainShader)));
 
-    m_rootNode.AddChild(std::move(std::make_unique<Model>("assets/backpack/backpack.obj", mainShader)));
+    m_rootNode.AddChild(std::make_unique<LightingStressScene>());
 
-    m_rootNode.AddChild(std::move(std::make_unique<PointLight>(
-            glm::vec3(2.0, 1.0, 1.0),
-            glm::vec3(255.0, 255.0, 255.0),
-            0.3,
-            0.7
-            )));
-
-//    m_rootNode.AddChild(std::move(std::make_unique<PointLight>(
-//            glm::vec3(-1.3, 0.0, -0.5),
-//            glm::vec3(0.0, 0.0, 255.0),
-//            0.3,
-//            0.6
-//    )));
-
-    m_rootNode.AddChild(std::move(std::make_unique<FreeFlyCamera>()));
+    m_rootNode.AddChild(std::make_unique<FreeFlyCamera>());
 }
 
 void Application::Loop() {
