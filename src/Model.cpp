@@ -15,6 +15,13 @@ Model::Model(const std::string &filename, std::shared_ptr<Shader> shader) {
     LoadModel(filename);
 }
 
+Model::Model(const std::string &filename, std::shared_ptr<Material> material, std::shared_ptr<Shader> shader) {
+    m_materialOverride = std::move(material);
+    m_shader = std::move(shader);
+
+    LoadModel(filename);
+}
+
 void Model::Render() {
     for (Mesh& mesh : m_meshes) {
         mesh.Draw(*m_shader);
@@ -104,45 +111,28 @@ Mesh Model::ProcessMesh(aiMesh *mesh, const aiScene *scene) {
     }
 
     // process material
-    if (mesh->mMaterialIndex >= 0) {
+    if (m_materialOverride) {
+        // use the override material instead of whatever was included with the model
+        return {vertices, indices, m_materialOverride};
+    } else if (mesh->mMaterialIndex >= 0) {
+        // use the material included with the model
+
         aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
         std::shared_ptr<Texture> diffuseTexture = LoadMaterialTexture(material,
                                                                       aiTextureType_DIFFUSE,
                                                                       TextureType::DIFFUSE);
         std::shared_ptr<Texture> specularTexture = LoadMaterialTexture(material,
-                                                                      aiTextureType_SPECULAR,
-                                                                      TextureType::SPECULAR);
+                                                                       aiTextureType_SPECULAR,
+                                                                       TextureType::SPECULAR);
 
         return {vertices, indices, std::make_shared<Material>(diffuseTexture, specularTexture)};
+    } else {
+        // no material was specified, and nothing was loaded from the model
 
-//        // 1. diffuse maps
-//        std::vector<std::shared_ptr<Texture>> diffuseMaps = LoadMaterialTextures(material,
-//                                                                aiTextureType_DIFFUSE,
-//                                                                TextureType::DIFFUSE);
-//        textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
-//
-//        // 2. specular maps
-//        std::vector<std::shared_ptr<Texture>> specularMaps = LoadMaterialTextures(material,
-//                                                                 aiTextureType_SPECULAR,
-//                                                                 TextureType::SPECULAR);
-//        textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
-//
-//        // 3. normal maps
-//        std::vector<std::shared_ptr<Texture>> normalMaps = LoadMaterialTextures(material,
-//                                                               aiTextureType_HEIGHT, // TODO: make sure this is right
-//                                                               TextureType::NORMAL);
-//        textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
-//
-//        // 4. height maps
-//        std::vector<std::shared_ptr<Texture>> heightMaps = LoadMaterialTextures(material,
-//                                                               aiTextureType_AMBIENT,
-//                                                               TextureType::HEIGHT);
-//        textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
+        std::cerr << "The loaded model had no material and no material was manually specified!" << std::endl;
+        throw std::runtime_error("The loaded model had no material and no material was manually specified");
     }
-
-    std::cerr << "The loaded model had no material!" << std::endl;
-    throw std::runtime_error("The loaded model had no material");
 }
 
 std::shared_ptr<Texture> Model::LoadMaterialTexture(aiMaterial *mat, aiTextureType type, TextureType ourType) {

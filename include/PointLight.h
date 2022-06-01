@@ -7,6 +7,7 @@
 
 #include "SceneNode.h"
 #include "LightInfo.h"
+#include "Mesh.h"
 
 class PointLight : public SceneNode {
 public:
@@ -16,12 +17,13 @@ public:
      * @param lightColor the light's color, with each channel in the standard range [0, 255]
      * @param ambientStrength the light's ambient strength from [0, 1]
      * @param specularStrength the light's specular strength from [0, 1]
+     * @param debugDraw whether or not a small symbol should be rendered for debugging the light's position in space
      */
-    PointLight(glm::vec3 lightPos, glm::vec3 lightColor, float ambientStrength, float specularStrength);
+    PointLight(glm::vec3 lightPos, glm::vec3 lightColor, float ambientStrength, float specularStrength, bool debugDraw = false);
 
     void Input(SDL_Event& event) override {}
     void Update(float deltaTime) override;
-    void Render() override {}
+    void Render() override {};
 
     /**
      * Gets the information necessary to process this point light on the GPU

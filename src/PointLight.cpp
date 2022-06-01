@@ -3,8 +3,10 @@
 //
 
 #include "PointLight.h"
+#include "Model.h"
+#include "ShaderManager.h"
 
-PointLight::PointLight(glm::vec3 lightPos, glm::vec3 lightColor, float ambientStrength, float specularStrength) {
+PointLight::PointLight(glm::vec3 lightPos, glm::vec3 lightColor, float ambientStrength, float specularStrength, bool debugDraw) {
     // I leave the lightPos parameter uninitialized for m_info, because it updates automatically in Update()
     m_localTransform.Translate(lightPos.x, lightPos.y, lightPos.z);
     m_info.lightColor = lightColor / 255.0f; // convert from [0, 255] to [0, 1]
@@ -13,6 +15,18 @@ PointLight::PointLight(glm::vec3 lightPos, glm::vec3 lightColor, float ambientSt
 
     // Make sure this node gets picked up in lighting passes
     m_tag = NodeTag::POINT_LIGHT;
+
+    // Set up debug mesh if necessary
+    if (debugDraw) {
+        std::shared_ptr<Texture> diffuse = std::make_shared<Texture>(lightColor);
+        std::shared_ptr<Texture> specular = std::make_shared<Texture>(glm::vec3(0.0f, 0.0f, 0.0f), TextureType::SPECULAR);
+
+        std::shared_ptr<Material> mat = std::make_shared<Material>(diffuse, specular);
+
+        std::shared_ptr<Shader> diffuseShader = ShaderManager::GetInstance().GetShader("diffuse");
+
+        AddChild(std::make_unique<Model>("assets/point-light.obj", mat, std::move(diffuseShader)));
+    }
 }
 
 void PointLight::Update(float deltaTime) {

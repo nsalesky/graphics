@@ -75,8 +75,12 @@ void Application::Init() {
     const std::string fragShaderSrc = Util::LoadFile("shaders/frag.glsl");
     std::shared_ptr<Shader> mainShader = std::make_shared<Shader>(vertShaderSrc, fragShaderSrc);
 
-    // Set up the main shader
-    ShaderManager::GetInstance().AddShader("main", mainShader);
+    const std::string diffuseFragShaderSrc = Util::LoadFile("shaders/diffuse.frag");
+    std::shared_ptr<Shader> diffuseShader = std::make_shared<Shader>(vertShaderSrc, diffuseFragShaderSrc);
+
+    // Set up the important shaders
+    ShaderManager::GetInstance().AddShader("main", std::move(mainShader));
+    ShaderManager::GetInstance().AddShader("diffuse", std::move(diffuseShader));
 
 //    m_rootNode.AddChild(std::move(std::make_unique<Model>("assets/backpack/backpack.obj", mainShader)));
 

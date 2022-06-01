@@ -33,7 +33,7 @@ void SceneNode::RenderTree(Lighting &lighting) {
         m_shader->SetVector3("viewPos",
                              CameraManager::GetInstance().GetMainCamera()->GetPosition());
 
-        glm::mat4 modelMatrix = m_localTransform.GetInternalMatrix();
+        glm::mat4 modelMatrix = m_worldTransform.GetInternalMatrix();
         glm::mat4 viewMatrix = CameraManager::GetInstance().GetMainCamera()->GetViewMatrix();
         glm::mat4 projectionMatrix = Util::CalculateProjectionMatrix();
 

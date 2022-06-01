@@ -52,47 +52,10 @@ void Mesh::SetupMesh() {
 }
 
 void Mesh::Draw(Shader& shader) {
-//    unsigned int diffuseNum = 1;
-//    unsigned int specularNum = 1;
-//    unsigned int normalNum = 1;
-//    unsigned int heightNum = 1;
-//
-//    for (unsigned int i = 0; i < m_textures.size(); i += 1) {
-//        std::string number;
-//        std::string name;
-//
-//        switch (m_textures[i]->GetType()) {
-//            case TextureType::DIFFUSE:
-//                number = std::to_string(diffuseNum++);
-//                name = "texture_diffuse";
-//                break;
-//            case TextureType::SPECULAR:
-//                number = std::to_string(specularNum++);
-//                name = "texture_specular";
-//                break;
-//            case TextureType::NORMAL:
-//                number = std::to_string(normalNum++);
-//                name = "texture_normal";
-//                break;
-//            case TextureType::HEIGHT:
-//                number = std::to_string(heightNum++);
-//                name = "texture_height";
-//                break;
-//        }
-//
-//        // So the uniform will be named something like "material.texture_diffuse1"
-//        const std::string uniformName = "material." + name + number;
-//
-//        // Bind the texture to its slot with that uniform name
-//        m_textures[i]->Bind(shader, uniformName, i);
-//    }
     m_material->Bind(shader);
 
     // Draw the mesh
     glBindVertexArray(m_VAO);
-
-//    glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-//    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
 
     glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, nullptr);
     glBindVertexArray(0);

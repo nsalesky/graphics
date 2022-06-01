@@ -7,11 +7,7 @@
 #include "Material.h"
 #include "ShaderManager.h"
 #include "PointLight.h"
-#include "FreeFlyCamera.h"
 #include "CameraManager.h"
-#include "Util.h"
-
-#include <iostream>
 
 LightingStressScene::LightingStressScene() {
     m_shader = ShaderManager::GetInstance().GetShader("main");
@@ -39,14 +35,16 @@ LightingStressScene::LightingStressScene() {
             glm::vec3(2.0f, 1.0f, -2.0f),
             glm::vec3(255.0f, 0.0f, 255.0f),
             0.5,
-            0.5
+            0.5,
+            true
             ));
 
     AddChild(std::make_unique<PointLight>(
             glm::vec3(5.0f, 1.0f, 2.0f),
             glm::vec3(0.0f, 255.0f, 255.0f),
             0.5,
-            0.5
+            0.5,
+            true
     ));
 }
 
