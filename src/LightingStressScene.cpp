@@ -33,7 +33,7 @@ LightingStressScene::LightingStressScene() {
     // Create two lights
     AddChild(std::make_unique<PointLight>(
             glm::vec3(2.0f, 1.0f, -2.0f),
-            glm::vec3(255.0f, 0.0f, 255.0f),
+            glm::vec3(255.0f, 0.0f, 0.0f),
             0.5,
             0.5,
             true

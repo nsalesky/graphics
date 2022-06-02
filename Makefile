@@ -1,7 +1,7 @@
 # copied from https://www.partow.net/programming/makefile/index.html
 
 CXX      := g++
-CXXFLAGS := -std=c++17 -Wall
+CXXFLAGS := -std=c++20 -Wall
 LDFLAGS  := -lmingw32 -lSDL2main -lSDL2 -lassimp
 BUILD    := ./build
 OBJ_DIR  := $(BUILD)/objects

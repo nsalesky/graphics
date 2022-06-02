@@ -5,6 +5,7 @@
 #include "SceneNode.h"
 #include "CameraManager.h"
 #include "Util.h"
+#include "LightingManager.h"
 
 void SceneNode::InputTree(SDL_Event &e) {
     Input(e);
@@ -25,11 +26,13 @@ void SceneNode::UpdateTree(float deltaTime, Transform parentWorldTransform) {
     }
 }
 
-void SceneNode::RenderTree(Lighting &lighting) {
+void SceneNode::RenderTree() {
     // Bind the shader automatically if it exists
     if (m_shader) {
         m_shader->Bind();
-        lighting.BindUniforms(*m_shader);
+
+        LightingManager::GetInstance().BindUniforms(*m_shader);
+
         m_shader->SetVector3("viewPos",
                              CameraManager::GetInstance().GetMainCamera()->GetPosition());
 
@@ -50,7 +53,7 @@ void SceneNode::RenderTree(Lighting &lighting) {
     }
 
     for (std::unique_ptr<SceneNode> &child: m_children) {
-        child->RenderTree(lighting);
+        child->RenderTree();
     }
 }
 
@@ -58,22 +61,22 @@ void SceneNode::AddChild(std::unique_ptr<SceneNode> child) {
     m_children.push_back(std::move(child));
 }
 
-std::vector<std::reference_wrapper<SceneNode>> SceneNode::FindAllTaggedNodes(NodeTag queryTag) {
-    std::vector<std::reference_wrapper<SceneNode>> nodes;
-
-    if (m_tag == queryTag) {
-        nodes.emplace_back(*this);
-    }
-
-    for (auto &child: m_children) {
-        std::vector<std::reference_wrapper<SceneNode>> childTaggedNodes = child->FindAllTaggedNodes(queryTag);
-        for (auto &childTaggedNode: childTaggedNodes) {
-            nodes.emplace_back(childTaggedNode);
-        }
-    }
-
-    return nodes;
-}
+//std::vector<std::reference_wrapper<SceneNode>> SceneNode::FindAllTaggedNodes(NodeTag queryTag) {
+//    std::vector<std::reference_wrapper<SceneNode>> nodes;
+//
+//    if (m_tag == queryTag) {
+//        nodes.emplace_back(*this);
+//    }
+//
+//    for (auto &child: m_children) {
+//        std::vector<std::reference_wrapper<SceneNode>> childTaggedNodes = child->FindAllTaggedNodes(queryTag);
+//        for (auto &childTaggedNode: childTaggedNodes) {
+//            nodes.emplace_back(childTaggedNode);
+//        }
+//    }
+//
+//    return nodes;
+//}
 
 NodeTag SceneNode::GetTag() {
     return m_tag;

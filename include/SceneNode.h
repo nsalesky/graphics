@@ -10,7 +10,6 @@
 #include <memory>
 #include "Transform.h"
 #include "Shader.h"
-#include "Lighting.h"
 
 /**
  * A tag that can be used to mark a node as special in some way for the first-phase scene tree traversal. I plan to
@@ -41,10 +40,9 @@ public:
     void UpdateTree(float deltaTime, Transform parentWorldTransform);
 
     /**
-     * Renders the entire scene tree with the given lighting information.
-     * @param lighting the set of lighting information to bind
+     * Renders the entire scene tree.
      */
-    void RenderTree(Lighting& lighting);
+    void RenderTree();
 
     /**
      * Adds the given node as a child to this node and updates its transform relative to this parent node.
@@ -52,12 +50,12 @@ public:
      */
     void AddChild(std::unique_ptr<SceneNode> child);
 
-    /**
-     * Finds all nodes in this node's hierarchy with the given tag.
-     * @param queryTag the tag to query for
-     * @return all nodes in this hierarchy with that tag
-     */
-    std::vector<std::reference_wrapper<SceneNode>> FindAllTaggedNodes(NodeTag queryTag);
+//    /**
+//     * Finds all nodes in this node's hierarchy with the given tag.
+//     * @param queryTag the tag to query for
+//     * @return all nodes in this hierarchy with that tag
+//     */
+//    std::vector<std::reference_wrapper<SceneNode>> FindAllTaggedNodes(NodeTag queryTag);
 
     /**
      * Gets this node's tag, allowing nodes to be identified in a scene tree traversal.

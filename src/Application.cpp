@@ -5,16 +5,12 @@
 #include "Application.h"
 #include <iostream>
 #include <glad/glad.h>
-#include "CubeNode.h"
 #include <memory>
 #include "ShaderManager.h"
 #include "Shader.h"
 #include "Util.h"
-#include "Model.h"
 #include "FreeFlyCamera.h"
-#include "Lighting.h"
-#include "PointLight.h"
-#include "glm/glm.hpp"
+#include "LightingManager.h"
 #include "LightingStressScene.h"
 
 Application::Application(unsigned int width, unsigned int height)
@@ -129,17 +125,8 @@ void Application::Loop() {
 }
 
 void Application::Render() {
-    // Preliminary lighting pass, find all lights in the scene
-    std::vector<std::reference_wrapper<SceneNode>> pointLightNodes = m_rootNode.FindAllTaggedNodes(NodeTag::POINT_LIGHT);
-    std::vector<PointLightInfo> pointLightInfos;
-    for (auto pointLightNode : pointLightNodes) {
-        SceneNode& node = pointLightNode;
-        auto& pl = dynamic_cast<PointLight&>(node);
-        pointLightInfos.push_back(pl.GetInfo());
-    }
-
-    // Finally, construct the actual lighting information
-    Lighting lighting(pointLightInfos);
+    // Rebuild the lighting information
+    LightingManager::GetInstance().RebuildLights();
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_TEXTURE_2D);
@@ -150,5 +137,5 @@ void Application::Render() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Render the scene tree
-    m_rootNode.RenderTree(lighting);
+    m_rootNode.RenderTree();
 }

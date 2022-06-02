@@ -20,6 +20,7 @@ public:
      * @param debugDraw whether or not a small symbol should be rendered for debugging the light's position in space
      */
     PointLight(glm::vec3 lightPos, glm::vec3 lightColor, float ambientStrength, float specularStrength, bool debugDraw = false);
+    ~PointLight();
 
     void Input(SDL_Event& event) override {}
     void Update(float deltaTime) override;
@@ -32,6 +33,8 @@ public:
     PointLightInfo GetInfo();
 private:
    PointLightInfo m_info;
+
+   unsigned int m_pointLightID;
 };
 
 

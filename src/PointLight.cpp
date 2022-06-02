@@ -5,6 +5,7 @@
 #include "PointLight.h"
 #include "Model.h"
 #include "ShaderManager.h"
+#include "LightingManager.h"
 
 PointLight::PointLight(glm::vec3 lightPos, glm::vec3 lightColor, float ambientStrength, float specularStrength, bool debugDraw) {
     // I leave the lightPos parameter uninitialized for m_info, because it updates automatically in Update()
@@ -15,6 +16,11 @@ PointLight::PointLight(glm::vec3 lightPos, glm::vec3 lightColor, float ambientSt
 
     // Make sure this node gets picked up in lighting passes
     m_tag = NodeTag::POINT_LIGHT;
+
+    // Register this light with the global lighting manager TODO I have no idea if this actually works, it seems very janky to me lol
+    m_pointLightID = LightingManager::GetInstance().RegisterDynamicPointLight(
+            [this]() -> PointLightInfo {return this->GetInfo();}
+            );
 
     // Set up debug mesh if necessary
     if (debugDraw) {
@@ -27,6 +33,10 @@ PointLight::PointLight(glm::vec3 lightPos, glm::vec3 lightColor, float ambientSt
 
         AddChild(std::make_unique<Model>("assets/point-light.obj", mat, std::move(diffuseShader)));
     }
+}
+
+PointLight::~PointLight() {
+    LightingManager::GetInstance().UnregisterPointLight(m_pointLightID);
 }
 
 void PointLight::Update(float deltaTime) {
