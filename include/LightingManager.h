@@ -48,24 +48,35 @@ public:
     unsigned int RegisterPointLight(const std::function<PointLightInfo()>& infoFunc);
 
     /**
+     * Attempts to register the given directional light to an available slot.
+     * @param infoFunc a function that returns the directional light's current information when called
+     * @return the unique ID for the directional light slot registered to
+     * @throws std::range_error if there are already `MAX_DIRECTIONAL_LIGHTS` directional lights registered
+     */
+    unsigned int RegisterDirectionalLight(const std::function<DirectionalLightInfo()>& infoFunc);
+
+    /**
      * Attempts to unregister the point light with the given ID.
      * @param id the point light's unique ID returned by the register function
      * @throws std::invalid_argument if no point light is currently registered to that ID
      */
     void UnregisterPointLight(unsigned int id);
 
+    /**
+     * Attempts to unregister the directional light with the given ID.
+     * @param id the directional light's unique ID returned by the register function
+     * @throws std::invalid_argument if no directional light is currently registered to that ID
+     */
+    void UnregisterDirectionalLight(unsigned int id);
+
     LightingManager(const LightingManager& other) = delete;
     void operator=(LightingManager& other) = delete;
 private:
     std::vector<PointLightInfo> m_pointLights;
+    std::vector<DirectionalLightInfo> m_dirLights;
 
     std::unordered_map<unsigned int, std::function<PointLightInfo()>> m_dynamicPointLights;
-
-    /**
-     * Determines the lowest point light ID not currently being used by any point lights.
-     * @return the lowest ID, or -1 if all slots are full
-     */
-    int FindLowestAvailablePointLightID();
+    std::unordered_map<unsigned int, std::function<DirectionalLightInfo()>> m_dynamicDirLights;
 
     /**
      * Initializes the lighting manager.

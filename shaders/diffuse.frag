@@ -9,25 +9,8 @@ struct Material {
     sampler2D texture_normal;
 };
 
-struct PointLight {
-    vec3 lightPos;
-    vec3 lightColor;
-
-    float ambientStrength;
-    float specularStrength;
-
-    float constantFactor;
-    float linearFactor;
-    float quadraticFactor;
-};
-
-struct Lighting {
-    int numPointLights;
-    PointLight pointLights[10];
-};
 
 uniform Material material;
-uniform Lighting lighting;
 uniform vec3 viewPos;
 
 in vec2 TexCoords;

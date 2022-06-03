@@ -21,15 +21,11 @@ public:
     PointLight(glm::vec3 lightColor, float ambientStrength, float specularStrength, bool debugDraw = false);
     ~PointLight();
 
+protected:
     void Input(SDL_Event& event) override {}
     void Update(float deltaTime) override;
     void Render() override {};
 
-    /**
-     * Gets the information necessary to process this point light on the GPU
-     * @return this point light's information
-     */
-    PointLightInfo GetInfo();
 private:
    PointLightInfo m_info;
 

@@ -23,4 +23,15 @@ struct PointLightInfo {
     float quadraticFactor = 0.032f;
 };
 
+/**
+ * The information needed to construct a Directional Light in the fragment shader.
+ */
+struct DirectionalLightInfo {
+    glm::vec3 lightDir; // the direction that the light rays travel in
+    glm::vec3 lightColor; // the light's color, with each channel in the range [0, 1]
+
+    float ambientStrength; // the light's ambient strength from [0, 1]
+    float specularStrength; // the light's specular strength from [0, 1]
+};
+
 #endif //GRAPHICS_LIGHTINFO_H

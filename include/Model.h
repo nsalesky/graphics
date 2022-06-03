@@ -35,9 +35,11 @@ public:
      */
     Model(const std::string& filename, std::shared_ptr<Material> material, std::shared_ptr<Shader> shader);
 
+protected:
     void Input(SDL_Event& event) override {}
     void Update(float deltaTime) override {}
     void Render() override;
+
 private:
     std::vector<Mesh> m_meshes;
     std::vector<std::shared_ptr<Texture>> m_texturesLoaded;

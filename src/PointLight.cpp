@@ -18,8 +18,9 @@ PointLight::PointLight(glm::vec3 lightColor, float ambientStrength, float specul
 
     // Register this light with the global lighting manager
     m_pointLightID = LightingManager::GetInstance().RegisterPointLight(
-            [this]() -> PointLightInfo {return this->GetInfo();}
-            );
+            [this]() -> PointLightInfo {
+                return this->m_info;
+            });
 
     // Set up debug mesh if necessary
     if (debugDraw) {
@@ -40,8 +41,4 @@ PointLight::~PointLight() {
 
 void PointLight::Update(float deltaTime) {
     m_info.lightPos = m_worldTransform.GetInternalMatrix() * glm::vec4(0, 0, 0, 1);
-}
-
-PointLightInfo PointLight::GetInfo() {
-    return m_info;
 }

@@ -17,9 +17,11 @@ class CubeNode : public SceneNode {
 public:
     CubeNode();
 
+protected:
     void Input(SDL_Event& event) override;
     void Update(float deltaTime) override;
     void Render() override;
+
 private:
     std::unique_ptr<Mesh> m_mesh;
 };

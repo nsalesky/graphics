@@ -7,6 +7,7 @@
 #include "Material.h"
 #include "ShaderManager.h"
 #include "CameraManager.h"
+#include "DirectionalLight.h"
 
 LightingStressScene::LightingStressScene() {
     m_shader = ShaderManager::GetInstance().GetShader("main");
@@ -43,7 +44,7 @@ LightingStressScene::LightingStressScene() {
     m_pointlight1->GetTransform().Translate(3.0f, 0.0f, 0.0f);
     m_lightpivot->AddChild(m_pointlight1);
 
-    m_pointlight2 = std::make_unique<PointLight>(
+    m_pointlight2 = std::make_shared<PointLight>(
             glm::vec3(0.0f, 255.0f, 255.0f),
             0.5,
             0.5,
@@ -51,6 +52,12 @@ LightingStressScene::LightingStressScene() {
     );
     m_pointlight2->GetTransform().Translate(5.0f, 1.0f, 2.0f);
     AddChild(m_pointlight2);
+
+//    AddChild(std::make_shared<DirectionalLight>(
+//            glm::vec3(0.0f, -0.5f, 0.0f),
+//            glm::vec3(0.0f, 255.0f, 0.0f),
+//            0.5,
+//            0.5));
 
     m_counter = 0.0f;
 }
