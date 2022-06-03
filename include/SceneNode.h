@@ -48,7 +48,7 @@ public:
      * Adds the given node as a child to this node and updates its transform relative to this parent node.
      * @param child the child to add
      */
-    void AddChild(std::unique_ptr<SceneNode> child);
+    void AddChild(std::shared_ptr<SceneNode> child);
 
 //    /**
 //     * Finds all nodes in this node's hierarchy with the given tag.
@@ -56,6 +56,12 @@ public:
 //     * @return all nodes in this hierarchy with that tag
 //     */
 //    std::vector<std::reference_wrapper<SceneNode>> FindAllTaggedNodes(NodeTag queryTag);
+
+    /**
+     * Gets a reference to this node's local transform.
+     * @return this node's local transform
+     */
+    Transform& GetTransform();
 
     /**
      * Gets this node's tag, allowing nodes to be identified in a scene tree traversal.
@@ -87,7 +93,7 @@ protected:
 
     NodeTag m_tag = NodeTag::NO_TAG; // default to no tag, makes sense
 private:
-   std::vector<std::unique_ptr<SceneNode>> m_children;
+   std::vector<std::shared_ptr<SceneNode>> m_children;
 
 };
 

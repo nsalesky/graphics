@@ -78,11 +78,9 @@ void Application::Init() {
     ShaderManager::GetInstance().AddShader("main", std::move(mainShader));
     ShaderManager::GetInstance().AddShader("diffuse", std::move(diffuseShader));
 
-//    m_rootNode.AddChild(std::move(std::make_unique<Model>("assets/backpack/backpack.obj", mainShader)));
+    m_rootNode.AddChild(std::make_shared<LightingStressScene>());
 
-    m_rootNode.AddChild(std::make_unique<LightingStressScene>());
-
-    m_rootNode.AddChild(std::make_unique<FreeFlyCamera>());
+    m_rootNode.AddChild(std::make_shared<FreeFlyCamera>());
 }
 
 void Application::Loop() {

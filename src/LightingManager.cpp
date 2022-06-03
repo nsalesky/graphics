@@ -27,26 +27,12 @@ void LightingManager::BindUniforms(Shader &shader) {
 void LightingManager::RebuildLights() {
     m_pointLights.clear();
 
-    for (auto pointLight : m_staticPointLights) {
-        m_pointLights.push_back(pointLight.second);
-    }
-
     for (const auto& pointLight : m_dynamicPointLights) {
         m_pointLights.push_back(pointLight.second());
     }
 }
 
-unsigned int LightingManager::RegisterStaticPointLight(PointLightInfo info) {
-    int possibleID = FindLowestAvailablePointLightID();
-
-    if (possibleID == -1) {
-        throw std::range_error("Already at maximum number of point lights!");
-    }
-
-    m_staticPointLights.insert(std::make_pair(possibleID, info));
-}
-
-unsigned int LightingManager::RegisterDynamicPointLight(const std::function<PointLightInfo()>& infoFunc) {
+unsigned int LightingManager::RegisterPointLight(const std::function<PointLightInfo()>& infoFunc) {
     int possibleID = FindLowestAvailablePointLightID();
 
     if (possibleID == -1) {
@@ -54,12 +40,12 @@ unsigned int LightingManager::RegisterDynamicPointLight(const std::function<Poin
     }
 
     m_dynamicPointLights.insert(std::make_pair(possibleID, infoFunc));
+
+    return possibleID;
 }
 
 void LightingManager::UnregisterPointLight(unsigned int id) {
-    if (m_staticPointLights.contains(id)) {
-        m_staticPointLights.erase(id);
-    } else if (m_dynamicPointLights.contains(id)) {
+    if (m_dynamicPointLights.contains(id)) {
         m_dynamicPointLights.erase(id);
     } else {
         throw std::invalid_argument("No point light exists with the given ID");
@@ -68,7 +54,7 @@ void LightingManager::UnregisterPointLight(unsigned int id) {
 
 int LightingManager::FindLowestAvailablePointLightID() {
     for (int i = 0; i < MAX_POINT_LIGHTS; i += 1) {
-        if (!m_staticPointLights.contains(i) && !m_dynamicPointLights.contains(i)) {
+        if (!m_dynamicPointLights.contains(i)) {
             return i;
         }
     }

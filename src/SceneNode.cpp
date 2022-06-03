@@ -10,7 +10,7 @@
 void SceneNode::InputTree(SDL_Event &e) {
     Input(e);
 
-    for (std::unique_ptr<SceneNode> &child: m_children) {
+    for (auto &child: m_children) {
         child->InputTree(e);
     }
 }
@@ -21,7 +21,7 @@ void SceneNode::UpdateTree(float deltaTime, Transform parentWorldTransform) {
     // Update our world transform
     m_worldTransform = parentWorldTransform * m_localTransform;
 
-    for (std::unique_ptr<SceneNode> &child: m_children) {
+    for (auto &child: m_children) {
         child->UpdateTree(deltaTime, m_worldTransform);
     }
 }
@@ -52,12 +52,12 @@ void SceneNode::RenderTree() {
         m_shader->Unbind();
     }
 
-    for (std::unique_ptr<SceneNode> &child: m_children) {
+    for (auto &child: m_children) {
         child->RenderTree();
     }
 }
 
-void SceneNode::AddChild(std::unique_ptr<SceneNode> child) {
+void SceneNode::AddChild(std::shared_ptr<SceneNode> child) {
     m_children.push_back(std::move(child));
 }
 
@@ -77,6 +77,10 @@ void SceneNode::AddChild(std::unique_ptr<SceneNode> child) {
 //
 //    return nodes;
 //}
+
+Transform &SceneNode::GetTransform() {
+    return m_localTransform;
+}
 
 NodeTag SceneNode::GetTag() {
     return m_tag;

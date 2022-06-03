@@ -19,12 +19,22 @@ public:
     Transform();
 
     /**
-     * Translates this transform to the given coordinates.
+     * Translates this transform by the given coordinates, note: this is relative, this translation is added to the
+     * existing translation.
      * @param x the x-coordinate
      * @param y the y-coordinate
      * @param z the z-coordinate
      */
     void Translate(float x, float y, float z);
+
+    /**
+     * Translates this transform to the given coordinates, note: this is absolute, the translation is overwritten to
+     * this new position.
+     * @param x the x-coordinate
+     * @param y the y-coordinate
+     * @param z the z-coordinate
+     */
+    void SetPosition(float x, float y, float z);
 
     /**
      * Scales this transform by the given amounts.

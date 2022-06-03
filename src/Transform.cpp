@@ -13,6 +13,13 @@ void Transform::Translate(float x, float y, float z) {
     m_modelMatrix = glm::translate(m_modelMatrix, glm::vec3(x, y, z));
 }
 
+void Transform::SetPosition(float x, float y, float z) {
+    // Overwrite the translation values
+    m_modelMatrix[3][0] = x;
+    m_modelMatrix[3][1] = y;
+    m_modelMatrix[3][2] = z;
+}
+
 void Transform::Scale(float scale_x, float scale_y, float scale_z) {
     m_modelMatrix = glm::scale(m_modelMatrix, glm::vec3(scale_x, scale_y, scale_z));
 }

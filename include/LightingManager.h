@@ -5,15 +5,23 @@
 #ifndef GRAPHICS_LIGHTINGMANAGER_H
 #define GRAPHICS_LIGHTINGMANAGER_H
 
-#include <LightInfo.h>
+#include "LightInfo.h"
 #include <vector>
-#include <Shader.h>
+#include "Shader.h"
 #include <memory>
 #include <map>
 #include <functional>
 
+/**
+ * A singleton object that manages lighting information. Lights can be registered/unregistered with a unique ID, and then
+ * once per frame, this manager queries all registered lights to bundle up the lighting information to be sent to the GPU.
+ */
 class LightingManager {
 public:
+    /**
+     * Returns the single instance of the lighting manager.
+     * @return the lighting manager instance
+     */
     static LightingManager& GetInstance() {
         static LightingManager instance;
         return instance;
@@ -32,23 +40,15 @@ public:
     void RebuildLights();
 
     /**
-     * Attempts to register the given static point light to an available slot.
-     * @param info the point light's static information
-     * @return the unique ID for the point light slot registered to
-     * @throws std::range_error if there are already `MAX_POINT_LIGHTS` point lights registered
-     */
-    unsigned int RegisterStaticPointLight(PointLightInfo info);
-
-    /**
-     * Attempts to register the given dynamic point light to an available slot.
+     * Attempts to register the given point light to an available slot.
      * @param infoFunc a function that returns the point light's current information when called
      * @return the unique ID for the point light slot registered to
      * @throws std::range_error if there are already `MAX_POINT_LIGHTS` point lights registered
      */
-    unsigned int RegisterDynamicPointLight(const std::function<PointLightInfo()>& infoFunc);
+    unsigned int RegisterPointLight(const std::function<PointLightInfo()>& infoFunc);
 
     /**
-     * Attempts to unregister the point light with the given ID, whether static or dynamic.
+     * Attempts to unregister the point light with the given ID.
      * @param id the point light's unique ID returned by the register function
      * @throws std::invalid_argument if no point light is currently registered to that ID
      */
@@ -59,11 +59,10 @@ public:
 private:
     std::vector<PointLightInfo> m_pointLights;
 
-    std::unordered_map<unsigned int, PointLightInfo> m_staticPointLights;
     std::unordered_map<unsigned int, std::function<PointLightInfo()>> m_dynamicPointLights;
 
     /**
-     * Determines the lowest point light ID not currently being used by any static or dynamic lights.
+     * Determines the lowest point light ID not currently being used by any point lights.
      * @return the lowest ID, or -1 if all slots are full
      */
     int FindLowestAvailablePointLightID();

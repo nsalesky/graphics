@@ -13,13 +13,12 @@ class PointLight : public SceneNode {
 public:
     /**
      * Constructs a new point light with the given lighting parameters.
-     * @param lightPos the position of the light in local space.
      * @param lightColor the light's color, with each channel in the standard range [0, 255]
      * @param ambientStrength the light's ambient strength from [0, 1]
      * @param specularStrength the light's specular strength from [0, 1]
      * @param debugDraw whether or not a small symbol should be rendered for debugging the light's position in space
      */
-    PointLight(glm::vec3 lightPos, glm::vec3 lightColor, float ambientStrength, float specularStrength, bool debugDraw = false);
+    PointLight(glm::vec3 lightColor, float ambientStrength, float specularStrength, bool debugDraw = false);
     ~PointLight();
 
     void Input(SDL_Event& event) override {}
