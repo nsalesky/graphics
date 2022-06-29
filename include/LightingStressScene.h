@@ -28,6 +28,7 @@ private:
     std::shared_ptr<PointLight> m_pointlight1;
     std::shared_ptr<PointLight> m_pointlight2;
     std::shared_ptr<SpotLight> m_spotLight;
+    std::shared_ptr<SpotLight> m_spotLight2;
 
     float m_counter;
 };

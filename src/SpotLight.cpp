@@ -10,11 +10,12 @@
 #include "Model.h"
 #include "Constants.h"
 
-SpotLight::SpotLight(glm::vec3 dir, float cutoffAngle, glm::vec3 color, float ambientStrength, float specularStrength, bool debugDraw) {
+SpotLight::SpotLight(glm::vec3 dir, float innerCutoffAngle, float outerCutoffAngle, glm::vec3 color, float ambientStrength, float specularStrength, bool debugDraw) {
     // I leave the pos parameter uninitialized for m_info, because it updates automatically in Update()
     m_info.color = color / 255.0f; // convert from [0, 255] to [0, 1]
     m_info.dir = dir;
-    m_info.cutoffAngle = cos(glm::radians(cutoffAngle)); // convert the angle to radians, and then take the cosine value
+    m_info.innerCutoffAngle = cos(glm::radians(innerCutoffAngle)); // convert the angle to radians, and then take the cosine value
+    m_info.outerCutoffAngle = cos(glm::radians(outerCutoffAngle));
     m_info.ambientStrength = ambientStrength;
     m_info.specularStrength = specularStrength;
 

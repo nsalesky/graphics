@@ -29,7 +29,8 @@ struct DirectionalLight {
 struct SpotLight {
     vec3 pos;
     vec3 dir;
-    float cutoffAngle; // note: this is a cosine value
+    float innerCutoffAngle; // note: this is a cosine value
+    float outerCutoffAngle;
     vec3 color;
 
     float ambientStrength;
@@ -102,27 +103,23 @@ vec3 CalcSpotLight(SpotLight spotLight, vec3 normal, vec3 fragPos, vec3 viewDir)
     vec3 lightDir = normalize(spotLight.pos - fragPos); // direction from fragment to light
 
     float theta = dot(lightDir, normalize(-spotLight.dir));
-    if (theta > spotLight.cutoffAngle) { // check if greater because as x -> 90.0 degrees, cos(x) -> 0
-        // do normal lighting calculations
+    float epsilon = spotLight.innerCutoffAngle - spotLight.outerCutoffAngle;
+    float intensity = clamp((theta - spotLight.outerCutoffAngle) / epsilon, 0.0, 1.0);
 
-        // base lighting
-        vec3 baseLightingNoAmbient = CalcLight(normal, viewDir, lightDir, spotLight.color, 0.0, spotLight.specularStrength);
-        vec3 ambient = spotLight.ambientStrength * spotLight.color;
+    // base lighting
+    vec3 baseLightingNoAmbient = CalcLight(normal, viewDir, lightDir, spotLight.color, 0.0, spotLight.specularStrength);
+    vec3 ambient = spotLight.ambientStrength * spotLight.color;
 
-        // attenuation
-        float distance = length(spotLight.pos - fragPos);
-        float attenuation = 1.0 / (spotLight.constantFactor +
-                                   spotLight.linearFactor * distance +
-                                   spotLight.quadraticFactor * distance * distance);
+    // attenuation
+    float distance = length(spotLight.pos - fragPos);
+    float attenuation = 1.0 / (spotLight.constantFactor +
+                               spotLight.linearFactor * distance +
+                               spotLight.quadraticFactor * distance * distance);
 
-        // don't attenuate the ambient component
-        // otherwise, the light would be darker inside the spotlight than outside at large distances
-        return (baseLightingNoAmbient * attenuation) + ambient;
-
-    } else {
-        // only use ambient component
-        return spotLight.ambientStrength * spotLight.color;
-    }
+    // don't attenuate the ambient component and don't consider intensity for it
+    // otherwise, the light would be darker inside the spotlight than outside at large distances
+    // this makes sure we always have some ambient light
+    return (intensity * baseLightingNoAmbient * attenuation) + ambient;
 }
 
 void main() {

@@ -46,7 +46,8 @@ void LightingManager::BindUniforms(Shader &shader) {
         shader.SetVector3(baseName + "pos", info.pos);
         shader.SetVector3(baseName + "dir", info.dir);
         shader.SetVector3(baseName + "color", info.color);
-        shader.SetFloat(baseName + "cutoffAngle", cos(info.cutoffAngle)); // get the cosine value to compare with the dot product value
+        shader.SetFloat(baseName + "innerCutoffAngle", info.innerCutoffAngle);
+        shader.SetFloat(baseName + "outerCutoffAngle", info.outerCutoffAngle);
         shader.SetFloat(baseName + "ambientStrength", info.ambientStrength);
         shader.SetFloat(baseName + "specularStrength", info.specularStrength);
         shader.SetFloat(baseName + "constantFactor", info.constantFactor);

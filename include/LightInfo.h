@@ -43,7 +43,8 @@ struct DirectionalLightInfo {
 struct SpotLightInfo {
     glm::vec3 pos; // the position of the light in world space
     glm::vec3 dir; // the direction that the light rays travel in
-    float cutoffAngle; // the cutoff angle (as a cosine of radians) around the direction. We take the cosine value, so we can compare it with the dot product of the directions
+    float innerCutoffAngle; // the cutoff angle (as a cosine of radians) around the direction. We take the cosine value, so we can compare it with the dot product of the directions
+    float outerCutoffAngle; // the cutoff angle (same as the previous units) that sets the ultimate outer edge of the cone. Fragments between the two cutoffs will be smoothly interpolated
     glm::vec3 color; // the light's RGB color, with each channel in the range [0, 1]
 
     float ambientStrength; // the light's ambient strength from [0, 1]

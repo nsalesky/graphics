@@ -17,13 +17,14 @@ public:
     /**
      * Constructs a new spot light.
      * @param dir the direction that light rays will be emitted in
-     * @param cutoffAngle the cutoff angle in degrees for the "spot"
+     * @param innerCutoffAngle the cutoff angle in degrees for the "spot"
+     * @param outerCutoffAngle the cutoff angle in degrees for the outer edge of the "spot", fragments in between the cutoff angles will be interpolated
      * @param color the light's RGB color, with each channel in the range [0, 255]
      * @param ambientStrength the light's ambient strength, in the range [0, 1]
      * @param specularStrength the light's specular strength, in the range [0, 1]
      * @param debugDraw whether or not a small symbol should be rendered for debugging the light's position in space
      */
-    SpotLight(glm::vec3 dir, float cutoffAngle, glm::vec3 color, float ambientStrength, float specularStrength, bool debugDraw = false);
+    SpotLight(glm::vec3 dir, float innerCutoffAngle, float outerCutoffAngle, glm::vec3 color, float ambientStrength, float specularStrength, bool debugDraw = false);
     ~SpotLight();
 
 protected:

@@ -60,16 +60,30 @@ LightingStressScene::LightingStressScene() {
 //            0.5));
 
     m_spotLight = std::make_shared<SpotLight>(
-                    glm::vec3(0.0f, -1.0f, 0.0f),
+                    glm::vec3(2.4f, -1.0f, 0.0f),
                     20.0f,
+                    24.0f,
                     glm::vec3(255.0f, 0.0f, 0.0f),
                     0.1,
                     0.5,
                     true);
 
     m_spotLight->GetTransform().Translate(4.0f, 1.0f, 2.0f);
+    m_spotLight->GetTransform().Scale(0.3f, 0.3f, 0.3f);
     AddChild(m_spotLight);
 
+    m_spotLight2 = std::make_shared<SpotLight>(
+            glm::vec3(-2.4f, -1.0f, 0.0f),
+            20.0f,
+            24.0f,
+            glm::vec3(0.0f, 0.0f, 255.0f),
+            0.1,
+            0.5,
+            true);
+
+    m_spotLight2->GetTransform().Translate(8.0f, 1.0f, 2.0f);
+    m_spotLight2->GetTransform().Scale(0.3f, 0.3f, 0.3f);
+    AddChild(m_spotLight2);
 
     m_counter = 0.0f;
 }
