@@ -99,6 +99,11 @@ void Application::Loop() {
         now = SDL_GetPerformanceCounter();
         float deltaTime = ((now - last)*1000 / (float)SDL_GetPerformanceFrequency());
 
+        // Calculate and display the framerate
+        const float fps = 1000.0f / deltaTime;
+        const std::string title = "Graphics Demo [" + std::to_string(fps) + " fps]";
+        SDL_SetWindowTitle(m_window, title.c_str());
+
         //Input
         while(SDL_PollEvent(&event)) {
             // Two different ways to quit the program, either by clicking the quit button or by pressing "Q"
@@ -115,7 +120,7 @@ void Application::Loop() {
 
         Render();
 
-        SDL_Delay(25);
+//        SDL_Delay(2); // TODO: potentially remove this arbitrary delay, or introduce VSync or something
 
         // Swap buffers
         SDL_GL_SwapWindow(m_window);
