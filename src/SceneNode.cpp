@@ -82,7 +82,3 @@ void SceneNode::AddChild(std::shared_ptr<SceneNode> child) {
 Transform &SceneNode::GetTransform() {
     return m_localTransform;
 }
-
-NodeTag SceneNode::GetTag() {
-    return m_tag;
-}

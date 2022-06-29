@@ -27,9 +27,9 @@ protected:
     void Render() override {};
 
 private:
-   PointLightInfo m_info;
+   LightInfo m_info;
 
-   unsigned int m_pointLightID;
+   unsigned int m_lightID;
 };
 
 

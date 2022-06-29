@@ -6,50 +6,27 @@ struct Material {
     sampler2D texture_normal;
 };
 
-struct PointLight {
+const int POINT_LIGHT = 0;
+const int DIRECTIONAL_LIGHT = 1;
+const int SPOT_LIGHT = 2;
+
+struct Light {
+    int type;
     vec3 pos;
     vec3 color;
-
-    float ambientStrength;
-    float specularStrength;
-
-    float constantFactor;
-    float linearFactor;
-    float quadraticFactor;
-};
-
-struct DirectionalLight {
-    vec3 dir;
-    vec3 color;
-
-    float ambientStrength;
-    float specularStrength;
-};
-
-struct SpotLight {
-    vec3 pos;
     vec3 dir;
     float innerCutoffAngle; // note: this is a cosine value
-    float outerCutoffAngle;
-    vec3 color;
-
+    float outerCutoffAngle; // note: this is a cosine value
     float ambientStrength;
     float specularStrength;
-
     float constantFactor;
     float linearFactor;
     float quadraticFactor;
 };
 
 struct Lighting {
-    int numPointLights;
-    PointLight pointLights[10];
-
-    int numDirLights;
-    DirectionalLight dirLights[10];
-
-    int numSpotLights;
-    SpotLight spotLights[10];
+    int numLights;
+    Light lights[30];
 };
 
 uniform Material material;
@@ -78,7 +55,7 @@ vec3 CalcLight(vec3 normal, vec3 viewDir, vec3 lightDir, vec3 lightColor, float 
     return (ambient + diffuse + specular);
 }
 
-vec3 CalcPointLight(PointLight pointLight, vec3 normal, vec3 fragPos, vec3 viewDir) {
+vec3 CalcPointLight(Light pointLight, vec3 normal, vec3 fragPos, vec3 viewDir) {
     vec3 lightDir = normalize(pointLight.pos - fragPos); // direction from the fragment to light
 
     // Calculate the lighting without any attenuation
@@ -93,13 +70,13 @@ vec3 CalcPointLight(PointLight pointLight, vec3 normal, vec3 fragPos, vec3 viewD
     return baseLighting * attenuation;
 }
 
-vec3 CalcDirLight(DirectionalLight dirLight, vec3 normal, vec3 viewDir) {
+vec3 CalcDirLight(Light dirLight, vec3 normal, vec3 viewDir) {
     vec3 actualDir = normalize(-dirLight.dir); // reverse direction from light to fragment to instead be direction from fragment to light
 
     return CalcLight(normal, viewDir, actualDir, dirLight.color, dirLight.ambientStrength, dirLight.specularStrength);
 }
 
-vec3 CalcSpotLight(SpotLight spotLight, vec3 normal, vec3 fragPos, vec3 viewDir) {
+vec3 CalcSpotLight(Light spotLight, vec3 normal, vec3 fragPos, vec3 viewDir) {
     vec3 lightDir = normalize(spotLight.pos - fragPos); // direction from fragment to light
 
     float theta = dot(lightDir, normalize(-spotLight.dir));
@@ -131,19 +108,15 @@ void main() {
 
     vec3 totalLighting = vec3(0.0, 0.0, 0.0);
 
-    // Point lights
-    for (int i = 0; i < lighting.numPointLights; i += 1) {
-        totalLighting += CalcPointLight(lighting.pointLights[i], norm, FragPos, viewDir);
-    }
-
-    // Directional lights
-    for (int i = 0; i < lighting.numDirLights; i += 1) {
-        totalLighting += CalcDirLight(lighting.dirLights[i], norm, viewDir);
-    }
-
-    // Spot lights
-    for (int i = 0; i < lighting.numSpotLights; i += 1) {
-        totalLighting += CalcSpotLight(lighting.spotLights[i], norm, FragPos, viewDir);
+    // calculate lights
+    for (int i = 0; i < lighting.numLights; i += 1) {
+        if (lighting.lights[i].type == POINT_LIGHT) {
+            totalLighting += CalcPointLight(lighting.lights[i], norm, FragPos, viewDir);
+        } else if (lighting.lights[i].type == DIRECTIONAL_LIGHT) {
+            totalLighting += CalcDirLight(lighting.lights[i], norm, viewDir);
+        } else if (lighting.lights[i].type == SPOT_LIGHT) {
+            totalLighting += CalcSpotLight(lighting.lights[i], norm, FragPos, viewDir);
+        }
     }
 
     FragColor = vec4(diffuseColor * totalLighting, 1.0);

@@ -12,6 +12,7 @@
 
 SpotLight::SpotLight(glm::vec3 dir, float innerCutoffAngle, float outerCutoffAngle, glm::vec3 color, float ambientStrength, float specularStrength, bool debugDraw) {
     // I leave the pos parameter uninitialized for m_info, because it updates automatically in Update()
+    m_info.type = LightInfo::SPOT_LIGHT;
     m_info.color = color / 255.0f; // convert from [0, 255] to [0, 1]
     m_info.dir = dir;
     m_info.innerCutoffAngle = cos(glm::radians(innerCutoffAngle)); // convert the angle to radians, and then take the cosine value
@@ -20,8 +21,8 @@ SpotLight::SpotLight(glm::vec3 dir, float innerCutoffAngle, float outerCutoffAng
     m_info.specularStrength = specularStrength;
 
     // Register this light with the global lighting manager
-    m_spotLightId = LightingManager::GetInstance().RegisterSpotLight(
-            [this]() -> SpotLightInfo {
+    m_lightId = LightingManager::GetInstance().RegisterLight(
+            [this]() -> LightInfo {
                 return this->m_info;
             });
 
@@ -39,7 +40,7 @@ SpotLight::SpotLight(glm::vec3 dir, float innerCutoffAngle, float outerCutoffAng
 }
 
 SpotLight::~SpotLight() {
-    LightingManager::GetInstance().UnregisterSpotLight(m_spotLightId);
+    LightingManager::GetInstance().UnregisterLight(m_lightId);
 }
 
 void SpotLight::Update(float deltaTime) {

@@ -12,16 +12,6 @@
 #include "Shader.h"
 
 /**
- * A tag that can be used to mark a node as special in some way for the first-phase scene tree traversal. I plan to
- * use this for dynamic lights, so that lights can be a part of the scene tree, but still be located in a first-phase
- * traversal.
- */
-enum NodeTag {
-    NO_TAG, // a normal untagged node
-    POINT_LIGHT, // a point light
-};
-
-/**
  * An individual node in the scene which can contain multiple child nodes, all transformed relative to this parent.
  */
 class SceneNode {
@@ -63,11 +53,6 @@ public:
      */
     Transform& GetTransform();
 
-    /**
-     * Gets this node's tag, allowing nodes to be identified in a scene tree traversal.
-     * @return this node's tag
-     */
-    NodeTag GetTag();
 protected:
     Transform m_localTransform;
     Transform m_worldTransform;
@@ -91,7 +76,6 @@ protected:
      */
     virtual void Render() = 0;
 
-    NodeTag m_tag = NodeTag::NO_TAG; // default to no tag, makes sense
 private:
    std::vector<std::shared_ptr<SceneNode>> m_children;
 

@@ -9,13 +9,14 @@
 
 PointLight::PointLight(glm::vec3 color, float ambientStrength, float specularStrength, bool debugDraw) {
     // I leave the pos parameter uninitialized for m_info, because it updates automatically in Update()
+    m_info.type = LightInfo::POINT_LIGHT;
     m_info.color = color / 255.0f; // convert from [0, 255] to [0, 1]
     m_info.ambientStrength = ambientStrength;
     m_info.specularStrength = specularStrength;
 
     // Register this light with the global lighting manager
-    m_pointLightID = LightingManager::GetInstance().RegisterPointLight(
-            [this]() -> PointLightInfo {
+    m_lightID = LightingManager::GetInstance().RegisterLight(
+            [this]() -> LightInfo {
                 return this->m_info;
             });
 
@@ -33,7 +34,7 @@ PointLight::PointLight(glm::vec3 color, float ambientStrength, float specularStr
 }
 
 PointLight::~PointLight() {
-    LightingManager::GetInstance().UnregisterPointLight(m_pointLightID);
+    LightingManager::GetInstance().UnregisterLight(m_lightID);
 }
 
 void PointLight::Update(float deltaTime) {

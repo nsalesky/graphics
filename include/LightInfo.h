@@ -7,45 +7,30 @@
 
 #include "glm/glm.hpp"
 
-/**
- * The information needed to construct a Point Light in the fragment shader, ie a light
- * positioned at a given point that emits equally in all directions.
- */
-struct PointLightInfo {
-    glm::vec3 pos; // the position of the light in world space
-    glm::vec3 color; // the light's RGB color, with each channel in the range [0, 1]
-
-    float ambientStrength; // the light's ambient strength from [0, 1]
-    float specularStrength; // the light's specular strength from [0, 1]
-
-    // Attenuation, magic parameters
-    float constantFactor = 1.0f;
-    float linearFactor = 0.09f;
-    float quadraticFactor = 0.032f;
-};
 
 /**
- * The information needed to construct a Directional Light in the fragment shader, ie a light
- * without a position that emits light universally in a given direction.
+ * A single combined struct containing all of the possible lighting information fields. Which fields are actually
+ * important depends on the "type" field of the light. I use this ugly design as a compromise to maximize the number
+ * of different types of lights I have available in a scene on the GPU in GLSL shaders. With the lighting information
+ * combined, I can have all point lights or all spotlights for instance, without having a separate cap for each. I wish
+ * there was a better way to accomplish this, but I haven't come across anything better yet.
  */
-struct DirectionalLightInfo {
-    glm::vec3 dir; // the direction that the light rays travel in
+struct LightInfo {
+    /**
+     * The different possible built-in light types.
+     */
+    enum LightType {
+        POINT_LIGHT,
+        DIRECTIONAL_LIGHT,
+        SPOT_LIGHT,
+    } type;
+
+    glm::vec3 pos; // the position of the light in world space (used by point and spotlights)
     glm::vec3 color; // the light's RGB color, with each channel in the range [0, 1]
 
-    float ambientStrength; // the light's ambient strength from [0, 1]
-    float specularStrength; // the light's specular strength from [0, 1]
-};
-
-/**
- * The information needed to construct a Spot Light in the fragment shader, ie a light with
- * a position that emits at a given direction and radius like a spotlight.
- */
-struct SpotLightInfo {
-    glm::vec3 pos; // the position of the light in world space
-    glm::vec3 dir; // the direction that the light rays travel in
-    float innerCutoffAngle; // the cutoff angle (as a cosine of radians) around the direction. We take the cosine value, so we can compare it with the dot product of the directions
-    float outerCutoffAngle; // the cutoff angle (same as the previous units) that sets the ultimate outer edge of the cone. Fragments between the two cutoffs will be smoothly interpolated
-    glm::vec3 color; // the light's RGB color, with each channel in the range [0, 1]
+    glm::vec3 dir; // the direction that the light rays travel in (used by directional and spotlights)
+    float innerCutoffAngle; // the cutoff angle (as a cosine of radians) around the direction. We take the cosine value, so we can compare it with the dot product of the directions (used by spotlights)
+    float outerCutoffAngle; // the cutoff angle (same as the previous units) that sets the ultimate outer edge of the cone. Fragments between the two cutoffs will be smoothly interpolated (used by spotlights)
 
     float ambientStrength; // the light's ambient strength from [0, 1]
     float specularStrength; // the light's specular strength from [0, 1]

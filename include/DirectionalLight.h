@@ -28,9 +28,9 @@ protected:
     void Update(float deltaTime) override {}
     void Render() override {};
 private:
-    DirectionalLightInfo m_info;
+    LightInfo m_info;
 
-    unsigned int m_dirLightID;
+    unsigned int m_lightID;
 };
 
 

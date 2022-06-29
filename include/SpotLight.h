@@ -33,9 +33,9 @@ protected:
     void Render() override {}
 
 private:
-    SpotLightInfo m_info;
+    LightInfo m_info;
 
-    unsigned int m_spotLightId;
+    unsigned int m_lightId;
 };
 
 
