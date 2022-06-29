@@ -5,8 +5,8 @@
 #include "DirectionalLight.h"
 #include "LightingManager.h"
 
-DirectionalLight::DirectionalLight(glm::vec3 lightDir, glm::vec3 lightColor, float ambientStrength, float specularStrength) {
-    m_info = {lightDir, lightColor / 255.0f, ambientStrength, specularStrength};
+DirectionalLight::DirectionalLight(glm::vec3 dir, glm::vec3 color, float ambientStrength, float specularStrength) {
+    m_info = {dir, color / 255.0f, ambientStrength, specularStrength};
 
     m_dirLightID = LightingManager::GetInstance().RegisterDirectionalLight(
             [this]() -> DirectionalLightInfo {

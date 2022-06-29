@@ -9,6 +9,7 @@
 #include "Mesh.h"
 #include <memory>
 #include "PointLight.h"
+#include "SpotLight.h"
 #include "EmptyNode.h"
 
 class LightingStressScene : public SceneNode {
@@ -26,6 +27,7 @@ private:
     std::shared_ptr<EmptyNode> m_lightpivot;
     std::shared_ptr<PointLight> m_pointlight1;
     std::shared_ptr<PointLight> m_pointlight2;
+    std::shared_ptr<SpotLight> m_spotLight;
 
     float m_counter;
 };

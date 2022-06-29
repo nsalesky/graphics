@@ -14,4 +14,11 @@
 // the max number of point lights per scene, directly tied to frag.glsl
 #define MAX_DIRECTIONAL_LIGHTS 10
 
+// the max number of spot lights per scene, directly tied to frag.glsl
+#define MAX_SPOT_LIGHTS 10
+
+namespace MathConstants {
+    const double PI = 3.14159265358979323846;
+};
+
 #endif //GRAPHICS_CONSTANTS_H

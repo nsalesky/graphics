@@ -1,21 +1,26 @@
 //
-// Created by nicks on 5/16/2022.
+// Created by nicks on 6/28/2022.
 //
 
-#include "PointLight.h"
-#include "Model.h"
-#include "ShaderManager.h"
+#include "SpotLight.h"
 #include "LightingManager.h"
+#include "Texture.h"
+#include "Material.h"
+#include "ShaderManager.h"
+#include "Model.h"
+#include "Constants.h"
 
-PointLight::PointLight(glm::vec3 color, float ambientStrength, float specularStrength, bool debugDraw) {
+SpotLight::SpotLight(glm::vec3 dir, float cutoffAngle, glm::vec3 color, float ambientStrength, float specularStrength, bool debugDraw) {
     // I leave the pos parameter uninitialized for m_info, because it updates automatically in Update()
     m_info.color = color / 255.0f; // convert from [0, 255] to [0, 1]
+    m_info.dir = dir;
+    m_info.cutoffAngle = cos(glm::radians(cutoffAngle)); // convert the angle to radians, and then take the cosine value
     m_info.ambientStrength = ambientStrength;
     m_info.specularStrength = specularStrength;
 
     // Register this light with the global lighting manager
-    m_pointLightID = LightingManager::GetInstance().RegisterPointLight(
-            [this]() -> PointLightInfo {
+    m_spotLightId = LightingManager::GetInstance().RegisterSpotLight(
+            [this]() -> SpotLightInfo {
                 return this->m_info;
             });
 
@@ -32,10 +37,10 @@ PointLight::PointLight(glm::vec3 color, float ambientStrength, float specularStr
     }
 }
 
-PointLight::~PointLight() {
-    LightingManager::GetInstance().UnregisterPointLight(m_pointLightID);
+SpotLight::~SpotLight() {
+    LightingManager::GetInstance().UnregisterSpotLight(m_spotLightId);
 }
 
-void PointLight::Update(float deltaTime) {
+void SpotLight::Update(float deltaTime) {
     m_info.pos = m_worldTransform.GetInternalMatrix() * glm::vec4(0, 0, 0, 1);
 }

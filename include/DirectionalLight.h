@@ -15,12 +15,12 @@ class DirectionalLight : public SceneNode {
 public:
     /**
      * Constructs a new directional light.
-     * @param lightDir the direction that light rays will travel in
-     * @param lightColor the light's color, with each channel in the range [0, 255]
+     * @param dir the direction that light rays will travel in
+     * @param color the light's RGB color, with each channel in the range [0, 255]
      * @param ambientStrength the light's ambient strength, in the range [0, 1]
      * @param specularStrength the light's specular strength, in the range [0, 1]
      */
-    DirectionalLight(glm::vec3 lightDir, glm::vec3 lightColor, float ambientStrength, float specularStrength);
+    DirectionalLight(glm::vec3 dir, glm::vec3 color, float ambientStrength, float specularStrength);
     ~DirectionalLight();
 
 protected:

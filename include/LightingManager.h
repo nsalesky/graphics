@@ -39,6 +39,8 @@ public:
      */
     void RebuildLights();
 
+    // TODO: potentially clean up this abstraction with generic `LightInfo` objects
+
     /**
      * Attempts to register the given point light to an available slot.
      * @param infoFunc a function that returns the point light's current information when called
@@ -56,6 +58,14 @@ public:
     unsigned int RegisterDirectionalLight(const std::function<DirectionalLightInfo()>& infoFunc);
 
     /**
+     * Attempts to register the given spot light to an available slot.
+     * @param infoFunc a function that returns the spot light's current information when called
+     * @return the unique ID for the spot light slot registered to
+     * @throws std::range_error if there are already `MAX_SPOT_LIGHT` spot lights registered
+     */
+    unsigned int RegisterSpotLight(const std::function<SpotLightInfo()>& infoFunc);
+
+    /**
      * Attempts to unregister the point light with the given ID.
      * @param id the point light's unique ID returned by the register function
      * @throws std::invalid_argument if no point light is currently registered to that ID
@@ -69,14 +79,25 @@ public:
      */
     void UnregisterDirectionalLight(unsigned int id);
 
+    /**
+     * Attempts to unregister the spot light with the given ID.
+     * @param id the spot light's unique ID returned by the register function
+     * @throws std::invalid_argument if no spot light is currently registered to that ID
+     */
+    void UnregisterSpotLight(unsigned int id);
+
     LightingManager(const LightingManager& other) = delete;
     void operator=(LightingManager& other) = delete;
 private:
+    // the cached results of calling the below functions
     std::vector<PointLightInfo> m_pointLights;
     std::vector<DirectionalLightInfo> m_dirLights;
+    std::vector<SpotLightInfo> m_spotLights;
 
+    // The collections of functions to query lighting info
     std::unordered_map<unsigned int, std::function<PointLightInfo()>> m_dynamicPointLights;
     std::unordered_map<unsigned int, std::function<DirectionalLightInfo()>> m_dynamicDirLights;
+    std::unordered_map<unsigned int, std::function<SpotLightInfo()>> m_dynamicSpotLights;
 
     /**
      * Initializes the lighting manager.
