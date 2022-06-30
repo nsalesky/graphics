@@ -53,6 +53,14 @@ public:
      */
     Transform& GetTransform();
 
+//    /**
+//     * Overwrites this node's current shader with the given shader for future rendering calls. Note: this method
+//     * probably isn't the best idea, and it really only makes sense for nodes utilizing the single shared `m_shader`
+//     * field as their only shader. I'm just using it to simplify writing small experiments.
+//     * @param shader the new shader to use
+//     */
+//    void SetShader(std::shared_ptr<Shader> shader);
+
 protected:
     Transform m_localTransform;
     Transform m_worldTransform;

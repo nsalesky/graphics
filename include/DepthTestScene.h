@@ -6,6 +6,8 @@
 #define GRAPHICS_DEPTHTESTSCENE_H
 
 #include "SceneNode.h"
+#include <memory>
+#include "Model.h"
 
 class DepthTestScene : public SceneNode {
 public:
@@ -14,8 +16,17 @@ public:
 
 protected:
     void Input(SDL_Event& e) override {}
-    void Update(float deltaTime) override {}
-    void Render() override {}
+    void Update(float deltaTime) override;
+    void Render() override;
+
+private:
+    std::unique_ptr<Model> m_cube1;
+    std::unique_ptr<Model> m_cube2;
+
+    std::unique_ptr<Model> m_cube1Upscaled;
+    std::unique_ptr<Model> m_cube2Upscaled;
+
+    std::unique_ptr<Model> m_plane;
 };
 
 

@@ -62,23 +62,10 @@ void SceneNode::AddChild(std::shared_ptr<SceneNode> child) {
     m_children.push_back(std::move(child));
 }
 
-//std::vector<std::reference_wrapper<SceneNode>> SceneNode::FindAllTaggedNodes(NodeTag queryTag) {
-//    std::vector<std::reference_wrapper<SceneNode>> nodes;
-//
-//    if (m_tag == queryTag) {
-//        nodes.emplace_back(*this);
-//    }
-//
-//    for (auto &child: m_children) {
-//        std::vector<std::reference_wrapper<SceneNode>> childTaggedNodes = child->FindAllTaggedNodes(queryTag);
-//        for (auto &childTaggedNode: childTaggedNodes) {
-//            nodes.emplace_back(childTaggedNode);
-//        }
-//    }
-//
-//    return nodes;
-//}
-
 Transform &SceneNode::GetTransform() {
     return m_localTransform;
 }
+
+//void SceneNode::SetShader(std::shared_ptr<Shader> shader) {
+//    m_shader = std::move(shader);
+//}

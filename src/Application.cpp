@@ -40,6 +40,7 @@ void Application::Init() {
     // Request a double buffer
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+    SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 1); // request a stencil buffer of at least 1 bit per pixel
 
     // Create the window
     m_window = SDL_CreateWindow(
@@ -89,9 +90,7 @@ void Application::Loop() {
     // Set up OpenGL features
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LESS);
-
-
+    glEnable(GL_STENCIL_TEST);
 
     bool running = true;
     SDL_Event event;
@@ -143,7 +142,7 @@ void Application::Render() {
     glViewport(0, 0, m_width, m_height);
 
     glClearColor(0, 0, 0, 1);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
     // Render the scene tree
     m_rootNode.RenderTree();
