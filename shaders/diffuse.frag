@@ -9,7 +9,6 @@ struct Material {
     sampler2D texture_normal;
 };
 
-
 uniform Material material;
 uniform vec3 viewPos;
 
@@ -21,6 +20,5 @@ out vec4 FragColor;
 
 void main() {
     vec3 diffuseColor = texture(material.texture_diffuse, TexCoords).rgb;
-
     FragColor = vec4(diffuseColor, 1.0);
 }

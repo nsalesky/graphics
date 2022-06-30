@@ -12,6 +12,7 @@
 #include "FreeFlyCamera.h"
 #include "LightingManager.h"
 #include "LightingStressScene.h"
+#include "DepthTestScene.h"
 
 Application::Application(unsigned int width, unsigned int height)
 : m_width(width), m_height(height) {
@@ -78,12 +79,20 @@ void Application::Init() {
     ShaderManager::GetInstance().AddShader("main", std::move(mainShader));
     ShaderManager::GetInstance().AddShader("diffuse", std::move(diffuseShader));
 
-    m_rootNode.AddChild(std::make_shared<LightingStressScene>());
+//    m_rootNode.AddChild(std::make_shared<LightingStressScene>());
+    m_rootNode.AddChild(std::make_shared<DepthTestScene>());
 
     m_rootNode.AddChild(std::make_shared<FreeFlyCamera>());
 }
 
 void Application::Loop() {
+    // Set up OpenGL features
+    glEnable(GL_TEXTURE_2D);
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
+
+
+
     bool running = true;
     SDL_Event event;
 
@@ -130,9 +139,6 @@ void Application::Loop() {
 void Application::Render() {
     // Rebuild the lighting information
     LightingManager::GetInstance().RebuildLights();
-
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_TEXTURE_2D);
 
     glViewport(0, 0, m_width, m_height);
 

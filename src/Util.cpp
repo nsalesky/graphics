@@ -30,5 +30,5 @@ std::string Util::LoadFile(const std::string &filename) {
 }
 
 glm::mat4 Util::CalculateProjectionMatrix() {
-    return glm::perspective(45.0f, (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1f, 512.0f);
+    return glm::perspective(45.0f, (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1f, 100.0f);
 }
