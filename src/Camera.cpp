@@ -69,6 +69,10 @@ void Camera::SetPosition(glm::vec3 pos) {
     m_pos = pos;
 }
 
+glm::vec3 Camera::GetViewDir() {
+    return m_viewDir;
+}
+
 void Camera::SetViewDir(glm::vec3 viewDir) {
    m_viewDir = viewDir;
 }

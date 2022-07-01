@@ -81,6 +81,12 @@ public:
     void SetPosition(glm::vec3 pos);
 
     /**
+     * Gets the camera's view direction.
+     * @return the camera's current viewing direction
+     */
+    glm::vec3 GetViewDir();
+
+    /**
      * Sets the camera's view direction to the given vector.
      * @param viewDir the new view direction
      */

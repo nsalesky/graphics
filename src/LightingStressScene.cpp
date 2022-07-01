@@ -36,18 +36,18 @@ LightingStressScene::LightingStressScene() {
     std::shared_ptr<Material> quadMat = std::make_shared<Material>(m_framebuffer->GetColorTexture(), black);
 
     // Create the screen quad
-    std::vector<Vertex> screenVert = {
-            {glm::vec3(-1.0, -1.0f, 0.0f),   glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(0, 0)},
-            {glm::vec3(-1.0f, 1.0f, 0.0f),  glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(0, 1)},
-            {glm::vec3(1.0f, -1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(1, 0)},
-            {glm::vec3(1.0f, 1.0f, 0.0f),  glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(1, 1)},
-    };
 //    std::vector<Vertex> screenVert = {
-//            {glm::vec3(-0.95, -0.95f, 0.0f),   glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(0, 0)},
-//            {glm::vec3(-0.95f,-0.1f, 0.0f),  glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(0, 1)},
-//            {glm::vec3(-0.1f, -0.95f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(1, 0)},
-//            {glm::vec3(-0.1f, -0.1f, 0.0f),  glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(1, 1)},
+//            {glm::vec3(-1.0, -1.0f, 0.0f),   glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(0, 0)},
+//            {glm::vec3(-1.0f, 1.0f, 0.0f),  glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(0, 1)},
+//            {glm::vec3(1.0f, -1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(1, 0)},
+//            {glm::vec3(1.0f, 1.0f, 0.0f),  glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(1, 1)},
 //    };
+    std::vector<Vertex> screenVert = {
+            {glm::vec3(-0.9f, 0.4f, 0.0f),   glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(0, 0)},
+            {glm::vec3(-0.9f, 0.9f, 0.0f),  glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(0, 1)},
+            {glm::vec3(-0.4f, 0.4f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(1, 0)},
+            {glm::vec3(-0.4f, 0.9f, 0.0f),  glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(1, 1)},
+    };
 
 
     std::vector<unsigned int> screenIndices = {3, 1, 0,
@@ -125,6 +125,14 @@ void LightingStressScene::Update(float deltaTime) {
 }
 
 void LightingStressScene::Render() {
+    auto& mainCam = CameraManager::GetInstance().GetMainCamera();
+
+    // Rotate 180 degrees and update the shader
+    glm::vec3 originalViewDir = mainCam->GetViewDir();
+    mainCam->SetViewDir(-originalViewDir);
+    glm::mat4 viewMatrix = CameraManager::GetInstance().GetMainCamera()->GetViewMatrix();
+    m_shader->SetMatrix4("viewMatrix", viewMatrix);
+
     // Render the scene into the framebuffer
     m_framebuffer->Bind();
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -139,11 +147,27 @@ void LightingStressScene::Render() {
 
     m_framebuffer->Unbind();
 
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
-    glDisable(GL_DEPTH_TEST);
+    // Restore the camera
+    m_shader->Bind();
+    mainCam->SetViewDir(originalViewDir);
+    viewMatrix = CameraManager::GetInstance().GetMainCamera()->GetViewMatrix();
+    m_shader->SetMatrix4("viewMatrix", viewMatrix);
 
-    // Render the quad with the framebuffer information
+    // Draw the scene normally to the screen
+    m_planeMesh->Draw(*m_shader);
+    m_pointlight1->RenderTree();
+    m_pointlight2->RenderTree();
+    m_lightpivot->RenderTree();
+    m_spotLight->RenderTree();
+    m_spotLight2->RenderTree();
+
+    // Draw the rear-view overlay
+
+//    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+//    glClear(GL_COLOR_BUFFER_BIT);
+    glDisable(GL_DEPTH_TEST);
+//
+//    // Render the quad with the framebuffer information
     m_screenShader->Bind();
     m_screenQuad->Draw(*m_screenShader);
     m_shader->Bind(); // rebind the normal shader
