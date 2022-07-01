@@ -11,6 +11,7 @@
 
 LightingStressScene::LightingStressScene() {
     m_shader = ShaderManager::GetInstance().GetShader("main");
+    m_manuallyRenderChildren = true;
 
     // Create a plane
     std::vector<Vertex> planeVert = {
@@ -29,6 +30,33 @@ LightingStressScene::LightingStressScene() {
     std::shared_ptr<Material> planeMat = std::make_shared<Material>(white, black);
 
     m_planeMesh = std::make_unique<Mesh>(planeVert, planeIndices, planeMat);
+
+    // Create the framebuffer
+    m_framebuffer = std::make_unique<Framebuffer>();
+    std::shared_ptr<Material> quadMat = std::make_shared<Material>(m_framebuffer->GetColorTexture(), black);
+
+    // Create the screen quad
+    std::vector<Vertex> screenVert = {
+            {glm::vec3(-1.0, -1.0f, 0.0f),   glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(0, 0)},
+            {glm::vec3(-1.0f, 1.0f, 0.0f),  glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(0, 1)},
+            {glm::vec3(1.0f, -1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(1, 0)},
+            {glm::vec3(1.0f, 1.0f, 0.0f),  glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(1, 1)},
+    };
+//    std::vector<Vertex> screenVert = {
+//            {glm::vec3(-0.95, -0.95f, 0.0f),   glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(0, 0)},
+//            {glm::vec3(-0.95f,-0.1f, 0.0f),  glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(0, 1)},
+//            {glm::vec3(-0.1f, -0.95f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(1, 0)},
+//            {glm::vec3(-0.1f, -0.1f, 0.0f),  glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(1, 1)},
+//    };
+
+
+    std::vector<unsigned int> screenIndices = {3, 1, 0,
+                                               3, 0, 2};
+
+    m_screenQuad = std::make_unique<Mesh>(screenVert, screenIndices, quadMat);
+    m_screenShader = std::make_unique<Shader>("shaders/postprocess.vert", "shaders/postprocess.frag", true);
+
+    // ================= Set up the lights ============================
 
     m_lightpivot = std::make_shared<EmptyNode>();
     m_lightpivot->GetTransform().Translate(2.0f, 1.0f, 3.0f);
@@ -97,5 +125,27 @@ void LightingStressScene::Update(float deltaTime) {
 }
 
 void LightingStressScene::Render() {
+    // Render the scene into the framebuffer
+    m_framebuffer->Bind();
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
     m_planeMesh->Draw(*m_shader);
+    m_pointlight1->RenderTree();
+    m_pointlight2->RenderTree();
+    m_lightpivot->RenderTree();
+    m_spotLight->RenderTree();
+    m_spotLight2->RenderTree();
+
+    m_framebuffer->Unbind();
+
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glDisable(GL_DEPTH_TEST);
+
+    // Render the quad with the framebuffer information
+    m_screenShader->Bind();
+    m_screenQuad->Draw(*m_screenShader);
+    m_shader->Bind(); // rebind the normal shader
+    glEnable(GL_DEPTH_TEST);
 }

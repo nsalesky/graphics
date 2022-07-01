@@ -11,6 +11,7 @@
 #include "PointLight.h"
 #include "SpotLight.h"
 #include "EmptyNode.h"
+#include "Framebuffer.h"
 
 class LightingStressScene : public SceneNode {
 public:
@@ -29,6 +30,10 @@ private:
     std::shared_ptr<PointLight> m_pointlight2;
     std::shared_ptr<SpotLight> m_spotLight;
     std::shared_ptr<SpotLight> m_spotLight2;
+
+    std::unique_ptr<Mesh> m_screenQuad;
+    std::unique_ptr<Shader> m_screenShader;
+    std::unique_ptr<Framebuffer> m_framebuffer;
 
     float m_counter;
 };

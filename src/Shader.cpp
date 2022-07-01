@@ -4,37 +4,46 @@
 
 #include "Shader.h"
 #include <iostream>
+#include "Util.h"
 
-Shader::Shader(const std::string &vertShaderSource, const std::string &fragShaderSource) {
+Shader::Shader(const std::string &vertShaderSource, const std::string &fragShaderSource, bool isFilename) {
+    if (isFilename) {
+        LoadShader(Util::LoadFile(vertShaderSource), Util::LoadFile(fragShaderSource));
+    } else {
+        LoadShader(vertShaderSource, fragShaderSource);
+    }
+}
+
+void Shader::LoadShader(const std::string &vertexSrc, const std::string &fragSrc) {
     // Load the shaders
-   unsigned int vertShader = CreateShader(GL_VERTEX_SHADER, vertShaderSource);
-   unsigned int fragShader = CreateShader(GL_FRAGMENT_SHADER, fragShaderSource);
+    unsigned int vertShader = CreateShader(GL_VERTEX_SHADER, vertexSrc);
+    unsigned int fragShader = CreateShader(GL_FRAGMENT_SHADER, fragSrc);
 
-   // Check for errors
-   if (vertShader == 0 || fragShader == 0) {
-       // TODO: might need to do something more sophisticated here, maybe quit the program?
-       std::cerr << "Could not create shader!" << std::endl;
-       return;
-   }
+    // Check for errors
+    if (vertShader == 0 || fragShader == 0) {
+        // TODO: might need to do something more sophisticated here, maybe quit the program?
+        std::cerr << "Could not create shader!" << std::endl;
+        return;
+    }
 
-   // Create the program and link together the individual shaders
-   m_programID = glCreateProgram();
-   glAttachShader(m_programID, vertShader);
-   glAttachShader(m_programID, fragShader);
-   glLinkProgram(m_programID);
+    // Create the program and link together the individual shaders
+    m_programID = glCreateProgram();
+    glAttachShader(m_programID, vertShader);
+    glAttachShader(m_programID, fragShader);
+    glLinkProgram(m_programID);
 
-   // Check for linking errors
-   int success;
-   glGetProgramiv(m_programID, GL_LINK_STATUS, &success);
-   if (!success) {
-       char infoLog[512];
-       glGetProgramInfoLog(m_programID, 512, nullptr, infoLog);
-       std::cerr << "Error linking program: " << infoLog << std::endl;
-   }
+    // Check for linking errors
+    int success;
+    glGetProgramiv(m_programID, GL_LINK_STATUS, &success);
+    if (!success) {
+        char infoLog[512];
+        glGetProgramInfoLog(m_programID, 512, nullptr, infoLog);
+        std::cerr << "Error linking program: " << infoLog << std::endl;
+    }
 
-   // delete the individual shaders once they're linked into the program, as they are no longer needed
-   glDeleteShader(vertShader);
-   glDeleteShader(fragShader);
+    // delete the individual shaders once they're linked into the program, as they are no longer needed
+    glDeleteShader(vertShader);
+    glDeleteShader(fragShader);
 }
 
 Shader::~Shader() {

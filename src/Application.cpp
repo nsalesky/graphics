@@ -80,8 +80,8 @@ void Application::Init() {
     ShaderManager::GetInstance().AddShader("main", std::move(mainShader));
     ShaderManager::GetInstance().AddShader("diffuse", std::move(diffuseShader));
 
-//    m_rootNode.AddChild(std::make_shared<LightingStressScene>());
-    m_rootNode.AddChild(std::make_shared<DepthTestScene>());
+    m_rootNode.AddChild(std::make_shared<LightingStressScene>());
+//    m_rootNode.AddChild(std::make_shared<DepthTestScene>());
 
     m_rootNode.AddChild(std::make_shared<FreeFlyCamera>());
 }
@@ -91,6 +91,7 @@ void Application::Loop() {
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_STENCIL_TEST);
+    glEnable(GL_CULL_FACE);
 
     bool running = true;
     SDL_Event event;

@@ -53,8 +53,10 @@ void SceneNode::RenderTree() {
         m_shader->Unbind();
     }
 
-    for (auto &child: m_children) {
-        child->RenderTree();
+    if (!m_manuallyRenderChildren) {
+        for (auto &child: m_children) {
+            child->RenderTree();
+        }
     }
 }
 

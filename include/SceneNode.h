@@ -62,8 +62,14 @@ public:
 //    void SetShader(std::shared_ptr<Shader> shader);
 
 protected:
-    Transform m_localTransform;
-    Transform m_worldTransform;
+    Transform m_localTransform; // this node's local transform. This is the transform that should be modified manually
+    Transform m_worldTransform; // this node's world transform. This transform is overwritten every update method relative to its parent
+
+    // if false, RenderTree() will automatically recursively render all of the children.
+    // if true, RenderTree() will not render the children, and leaves that up to the implementation of Render() to decicde
+    // this is useful when you want to use a framebuffer/stencil buffer or something, and need to render the children
+    // in a particular order with steps in between
+    bool m_manuallyRenderChildren = false;
 
     std::shared_ptr<Shader> m_shader;
 

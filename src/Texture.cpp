@@ -33,6 +33,11 @@ Texture::Texture(glm::vec3 color, const TextureType type) : m_type(type) {
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
+Texture::Texture(unsigned int textureID, const TextureType type) {
+    m_textureID = textureID;
+    m_type = type;
+}
+
 Texture::~Texture() {
     glDeleteTextures(1, &m_textureID);
 }

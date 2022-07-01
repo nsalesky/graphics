@@ -12,11 +12,13 @@
 class Shader {
 public:
     /**
-     * Constructs a new shader with the given source code.
-     * @param vertShaderSource the vertex shader source code
-     * @param fragShaderSource the fragment shader source code
+     * Constructs a new shader with the given source code, or optionally from the given filenames.
+     * @param vertShaderSource the vertex shader source code, or source filename if `isFilename` is true
+     * @param fragShaderSource the fragment shader source code, or source filename if `isFilename` is true
+     * @param isFilename if false, interprets the parameters as the source code itself, if true, loads the source code from the parameters as filenames
      */
-    Shader(const std::string& vertShaderSource, const std::string& fragShaderSource);
+    Shader(const std::string& vertShaderSource, const std::string& fragShaderSource, bool isFilename = false);
+
     ~Shader();
 
     /**
@@ -67,6 +69,13 @@ public:
     void SetVector3(const std::string& name, glm::vec3 value) const;
 private:
     unsigned int m_programID; // the OpenGL program ID
+
+    /**
+     * Loads in the given source code to construct the OpenGL shader object.
+     * @param vertexSrc the source code for the vertex shader
+     * @param fragSrc the source code for the fragment shader
+     */
+    void LoadShader(const std::string& vertexSrc, const std::string& fragSrc);
 
     /**
      * Loads and compiles a new shader of the given type with the given source code.

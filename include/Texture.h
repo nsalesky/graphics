@@ -16,6 +16,7 @@ enum TextureType {
     SPECULAR,
     NORMAL,
     HEIGHT,
+    DEPTH_AND_STENCIL // a texture with 24bits of depth information and 8 bits of stencil information per value
 };
 
 /**
@@ -29,7 +30,7 @@ public:
      * @param filename the filename of the image to load
      * @param type which type of texture this is
      */
-    Texture(const std::string filename, const TextureType type = TextureType::DIFFUSE);
+    Texture(const std::string filename, TextureType type = TextureType::DIFFUSE);
 
 
     /**
@@ -37,7 +38,15 @@ public:
      * @param color the solid color to fill the texture with
      * @param type which type of texture this is
      */
-    Texture(glm::vec3 color, const TextureType type = TextureType::DIFFUSE);
+    Texture(glm::vec3 color, TextureType type = TextureType::DIFFUSE);
+
+    /**
+     * Takes ownership of a pre-existing OpenGL texture with the given ID. I use this right now for framebuffers to take
+     * ownership of the texture attachments and pass them on as my own abstraction wherever I need to.
+     * @param textureID the id of the pre-existing texture on the GPU
+     * @param type which type of texture this is
+     */
+    Texture(unsigned int textureID, TextureType type = TextureType::DIFFUSE);
 
     ~Texture();
 
